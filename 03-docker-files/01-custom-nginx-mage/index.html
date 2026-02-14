@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nginx Server - Version Information</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ADD8E6; /* Light Blue */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            padding: 50px 60px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #E6F3FF;
+            border-left: 5px solid #3498db;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #34495e;
+            font-size: 1.1em;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: #2980b9;
+            font-size: 1.3em;
+            font-family: 'Courier New', monospace;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .status-dot {
+            width: 15px;
+            height: 15px;
+            background: #27ae60;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .status-text {
+            color: #27ae60;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            color: #95a5a6;
+            font-size: 0.9em;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .tech-item {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            color: #5a6c7d;
+            border: 2px solid #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .version-badge {
+                font-size: 1.5em;
+                padding: 10px 20px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🚀</div>
+        <h1>Nginx Web Server</h1>
+        <p class="subtitle">Custom Docker Image Running Successfully</p>
+
+        <div class="version-badge">
+            Version: 1.29.5
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <span class="info-label">🐳 Docker Image:</span>
+                <span class="info-value">nginx:1.29.5-alpine-perl</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🏔️ Base OS:</span>
+                <span class="info-value">Alpine Linux</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">📦 Variant:</span>
+                <span class="info-value">Alpine with Perl</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🌐 Server:</span>
+                <span class="info-value">Nginx/1.29.5</span>
+            </div>
+        </div>
+
+        <div class="status">
+            <div class="status-dot"></div>
+            <span class="status-text">Server is running perfectly!</span>
+        </div>
+
+        <div class="tech-stack">
+            <div class="tech-item">🐳 Docker</div>
+            <div class="tech-item">⚡ Nginx</div>
+            <div class="tech-item">🏔️ Alpine Linux</div>
+            <div class="tech-item">🔧 Perl</div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Container Information</strong></p>
+            <p>This page is served from a custom Nginx Docker container</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">
+                Built with ❤️ using Docker best practices
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Display current date and time
+        function updateTime() {
+            const now = new Date();
+            const footer = document.querySelector('.footer');
+            const timeElement = document.createElement('p');
+            timeElement.style.marginTop = '10px';
+            timeElement.style.fontSize = '0.85em';
+            timeElement.style.color = '#7f8c8d';
+            timeElement.innerHTML = `<strong>Current Time:</strong> ${now.toLocaleString()}`;
+            
+            if (!document.getElementById('current-time')) {
+                timeElement.id = 'current-time';
+                footer.insertBefore(timeElement, footer.lastElementChild);
+            }
+        }
+
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Add hover effect to info rows
+            const infoRows = document.querySelectorAll('.info-row');
+            infoRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+
+        // Console message
+        console.log('%c🚀 Nginx Server Running!', 'font-size: 20px; color: #3498db; font-weight: bold;');
+        console.log('%cVersion: 1.29.5', 'font-size: 14px; color: #2ecc71;');
+        console.log('%cDocker Image: nginx:1.29.5-alpine-perl', 'font-size: 14px; color: #9b59b6;');
+    </script>
+</body>
+</html>
