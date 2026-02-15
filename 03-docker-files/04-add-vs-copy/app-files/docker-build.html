@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Build - DevOps Navigator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-btn {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #764ba2;
+      transform: translateX(-5px);
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #2d3748;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon {
+      font-size: 60px;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #4a5568;
+      margin: 30px 0 15px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #4a5568;
+      margin-bottom: 15px;
+    }
+
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .command {
+      color: #48bb78;
+      font-weight: 600;
+    }
+
+    .example {
+      background: #f7fafc;
+      border-left: 4px solid #667eea;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip {
+      background: #ebf8ff;
+      border-left: 4px solid #3182ce;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip::before {
+      content: "💡 ";
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+    
+    <h1><span class="icon">🐳</span> Docker Build</h1>
+    
+    <p>The <strong>docker build</strong> command builds Docker images from a Dockerfile and a "context". The context is the set of files located in the specified PATH or URL.</p>
+
+    <h2>Basic Syntax</h2>
+    <div class="code-block">
+      <span class="command">docker build</span> [OPTIONS] PATH | URL | -
+    </div>
+
+    <h2>Common Commands</h2>
+    
+    <div class="example">
+      <h3>Build image with tag</h3>
+      <div class="code-block">
+        <span class="command">docker build -t myapp:latest .</span>
+      </div>
+      <p>Builds an image named "myapp" with tag "latest" from the current directory</p>
+    </div>
+
+    <div class="example">
+      <h3>Build with custom Dockerfile</h3>
+      <div class="code-block">
+        <span class="command">docker build -f Dockerfile.prod -t myapp:prod .</span>
+      </div>
+      <p>Uses a specific Dockerfile for production build</p>
+    </div>
+
+    <div class="example">
+      <h3>Build with build arguments</h3>
+      <div class="code-block">
+        <span class="command">docker build --build-arg VERSION=1.0 -t myapp:1.0 .</span>
+      </div>
+      <p>Passes build-time variables to the Dockerfile</p>
+    </div>
+
+    <h2>Important Options</h2>
+    <ul style="font-size: 18px; line-height: 2; color: #4a5568; margin: 20px 0 20px 40px;">
+      <li><strong>-t, --tag</strong>: Name and optionally tag the image</li>
+      <li><strong>-f, --file</strong>: Name of the Dockerfile</li>
+      <li><strong>--no-cache</strong>: Build without using cache</li>
+      <li><strong>--build-arg</strong>: Set build-time variables</li>
+      <li><strong>--target</strong>: Set target build stage (multi-stage builds)</li>
+    </ul>
+
+    <div class="tip">
+      <strong>Pro Tip:</strong> Use .dockerignore file to exclude files and directories from the build context to speed up builds and reduce image size.
+    </div>
+
+    <h2>Multi-Stage Build Example</h2>
+    <div class="code-block">
+# Build stage
+FROM node:18 AS builder
+COPY . /app
+RUN npm install && npm run build
+
+# Production stage
+FROM node:18-alpine
+COPY --from=builder /app/dist /app
+CMD ["node", "/app/server.js"]
+    </div>
+
+    <div class="tip">
+      <strong>Best Practice:</strong> Always tag your images with specific versions instead of using "latest" in production.
+    </div>
+  </div>
+</body>
+</html>

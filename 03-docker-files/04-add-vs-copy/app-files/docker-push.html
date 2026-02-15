@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Push - DevOps Navigator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-btn {
+      display: inline-block;
+      background: #e53e3e;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #c53030;
+      transform: translateX(-5px);
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #2d3748;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon {
+      font-size: 60px;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #4a5568;
+      margin: 30px 0 15px;
+      border-bottom: 3px solid #e53e3e;
+      padding-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #4a5568;
+      margin-bottom: 15px;
+    }
+
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .command {
+      color: #fc8181;
+      font-weight: 600;
+    }
+
+    .example {
+      background: #f7fafc;
+      border-left: 4px solid #e53e3e;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip {
+      background: #fff5f5;
+      border-left: 4px solid #c53030;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip::before {
+      content: "💡 ";
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+    
+    <h1><span class="icon">📤</span> Docker Push</h1>
+    
+    <p>The <strong>docker push</strong> command uploads a Docker image to a registry (Docker Hub, private registry, etc.) so it can be shared and deployed.</p>
+
+    <h2>Basic Syntax</h2>
+    <div class="code-block">
+      <span class="command">docker push</span> [OPTIONS] NAME[:TAG]
+    </div>
+
+    <h2>Common Commands</h2>
+    
+    <div class="example">
+      <h3>Push to Docker Hub</h3>
+      <div class="code-block">
+<span class="command"># Login first
+docker login
+
+# Push image
+docker push username/myapp:1.0.0</span>
+      </div>
+      <p>Pushes image to Docker Hub under your username</p>
+    </div>
+
+    <div class="example">
+      <h3>Push multiple tags</h3>
+      <div class="code-block">
+<span class="command">docker push username/myapp:1.0.0
+docker push username/myapp:latest</span>
+      </div>
+      <p>Pushes same image with different tags</p>
+    </div>
+
+    <div class="example">
+      <h3>Push to private registry</h3>
+      <div class="code-block">
+<span class="command"># Login to private registry
+docker login registry.company.com
+
+# Push image
+docker push registry.company.com/myapp:1.0.0</span>
+      </div>
+      <p>Pushes to company's private Docker registry</p>
+    </div>
+
+    <h2>Complete Workflow</h2>
+    <div class="code-block">
+# Step 1: Build the image
+<span class="command">docker build -t myapp:1.0.0 .</span>
+
+# Step 2: Tag for Docker Hub
+<span class="command">docker tag myapp:1.0.0 username/myapp:1.0.0
+docker tag myapp:1.0.0 username/myapp:latest</span>
+
+# Step 3: Login to Docker Hub
+<span class="command">docker login</span>
+
+# Step 4: Push images
+<span class="command">docker push username/myapp:1.0.0
+docker push username/myapp:latest</span>
+    </div>
+
+    <h2>Important Notes</h2>
+    <ul style="font-size: 18px; line-height: 2; color: #4a5568; margin: 20px 0 20px 40px;">
+      <li><strong>Login Required:</strong> Must login before pushing</li>
+      <li><strong>Proper Tagging:</strong> Image must be tagged with registry/username</li>
+      <li><strong>Network Required:</strong> Needs internet connection</li>
+      <li><strong>Permissions:</strong> Must have push access to repository</li>
+      <li><strong>Image Layers:</strong> Only changed layers are uploaded</li>
+    </ul>
+
+    <div class="tip">
+      <strong>Pro Tip:</strong> Docker only pushes layers that don't already exist in the registry, making subsequent pushes much faster.
+    </div>
+
+    <h2>CI/CD Integration</h2>
+    <div class="code-block">
+# GitHub Actions example
+<span class="command">- name: Login to Docker Hub
+  uses: docker/login-action@v3
+  with:
+    username: ${{ secrets.DOCKER_USERNAME }}
+    password: ${{ secrets.DOCKER_PASSWORD }}
+
+- name: Build and push
+  uses: docker/build-push-action@v5
+  with:
+    context: .
+    push: true
+    tags: |
+      username/myapp:${{ github.sha }}
+      username/myapp:latest</span>
+    </div>
+
+    <div class="tip">
+      <strong>Best Practice:</strong> In CI/CD pipelines, use service accounts or access tokens instead of personal credentials for pushing images.
+    </div>
+
+    <h2>Verify Push</h2>
+    <div class="code-block">
+# Pull the image to verify
+<span class="command">docker pull username/myapp:1.0.0</span>
+
+# Run the pulled image
+<span class="command">docker run -d -p 8080:80 username/myapp:1.0.0</span>
+    </div>
+
+    <h2>Registry Options</h2>
+    <ul style="font-size: 18px; line-height: 2; color: #4a5568; margin: 20px 0 20px 40px;">
+      <li><strong>Docker Hub:</strong> docker.io/username/image</li>
+      <li><strong>AWS ECR:</strong> aws_account_id.dkr.ecr.region.amazonaws.com/image</li>
+      <li><strong>Google GCR:</strong> gcr.io/project-id/image</li>
+      <li><strong>Azure ACR:</strong> registry.azurecr.io/image</li>
+      <li><strong>GitHub:</strong> ghcr.io/username/image</li>
+    </ul>
+  </div>
+</body>
+</html>

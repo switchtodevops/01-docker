@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Run - DevOps Navigator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-btn {
+      display: inline-block;
+      background: #48bb78;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #38a169;
+      transform: translateX(-5px);
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #2d3748;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon {
+      font-size: 60px;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #4a5568;
+      margin: 30px 0 15px;
+      border-bottom: 3px solid #48bb78;
+      padding-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #4a5568;
+      margin-bottom: 15px;
+    }
+
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .command {
+      color: #48bb78;
+      font-weight: 600;
+    }
+
+    .example {
+      background: #f7fafc;
+      border-left: 4px solid #48bb78;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip {
+      background: #f0fff4;
+      border-left: 4px solid #38a169;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip::before {
+      content: "💡 ";
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+    
+    <h1><span class="icon">▶️</span> Docker Run</h1>
+    
+    <p>The <strong>docker run</strong> command creates and starts a new container from a Docker image. It's one of the most commonly used Docker commands.</p>
+
+    <h2>Basic Syntax</h2>
+    <div class="code-block">
+      <span class="command">docker run</span> [OPTIONS] IMAGE [COMMAND] [ARG...]
+    </div>
+
+    <h2>Common Commands</h2>
+    
+    <div class="example">
+      <h3>Run container in detached mode</h3>
+      <div class="code-block">
+        <span class="command">docker run -d --name myapp myapp:latest</span>
+      </div>
+      <p>Runs container in background with a custom name</p>
+    </div>
+
+    <div class="example">
+      <h3>Run with port mapping</h3>
+      <div class="code-block">
+        <span class="command">docker run -d -p 8080:80 nginx</span>
+      </div>
+      <p>Maps host port 8080 to container port 80</p>
+    </div>
+
+    <div class="example">
+      <h3>Run with environment variables</h3>
+      <div class="code-block">
+        <span class="command">docker run -d -e DB_HOST=localhost -e DB_PORT=5432 myapp</span>
+      </div>
+      <p>Passes environment variables to the container</p>
+    </div>
+
+    <div class="example">
+      <h3>Run with volume mount</h3>
+      <div class="code-block">
+        <span class="command">docker run -d -v /host/data:/container/data myapp</span>
+      </div>
+      <p>Mounts host directory into container for persistent data</p>
+    </div>
+
+    <h2>Important Options</h2>
+    <ul style="font-size: 18px; line-height: 2; color: #4a5568; margin: 20px 0 20px 40px;">
+      <li><strong>-d, --detach</strong>: Run container in background</li>
+      <li><strong>-p, --publish</strong>: Publish container port to host</li>
+      <li><strong>-e, --env</strong>: Set environment variables</li>
+      <li><strong>-v, --volume</strong>: Mount volumes</li>
+      <li><strong>--name</strong>: Assign a name to container</li>
+      <li><strong>--rm</strong>: Remove container when it exits</li>
+      <li><strong>-it</strong>: Interactive terminal (for debugging)</li>
+      <li><strong>--restart</strong>: Restart policy (no, on-failure, always, unless-stopped)</li>
+    </ul>
+
+    <div class="tip">
+      <strong>Pro Tip:</strong> Use `docker run --rm` for temporary containers that you want to be automatically removed after they stop.
+    </div>
+
+    <h2>Production Example</h2>
+    <div class="code-block">
+<span class="command">docker run -d \
+  --name myapp-prod \
+  -p 80:8080 \
+  -e NODE_ENV=production \
+  -e DB_HOST=db.example.com \
+  --restart unless-stopped \
+  --health-cmd "curl -f http://localhost:8080/health || exit 1" \
+  --health-interval=30s \
+  myapp:1.0.0</span>
+    </div>
+
+    <div class="tip">
+      <strong>Best Practice:</strong> Always specify exact image versions (e.g., myapp:1.0.0) instead of "latest" in production environments.
+    </div>
+
+    <h2>Quick Reference</h2>
+    <div class="example">
+      <div class="code-block">
+# Run and enter container shell
+<span class="command">docker run -it ubuntu bash</span>
+
+# Run with automatic cleanup
+<span class="command">docker run --rm alpine echo "Hello World"</span>
+
+# Run with resource limits
+<span class="command">docker run -d --memory="512m" --cpus="1.5" myapp</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

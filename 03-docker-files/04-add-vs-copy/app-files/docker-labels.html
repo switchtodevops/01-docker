@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Labels - DevOps Navigator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #805ad5 0%, #6b46c1 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-btn {
+      display: inline-block;
+      background: #805ad5;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #6b46c1;
+      transform: translateX(-5px);
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #2d3748;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon {
+      font-size: 60px;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #4a5568;
+      margin: 30px 0 15px;
+      border-bottom: 3px solid #805ad5;
+      padding-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #4a5568;
+      margin-bottom: 15px;
+    }
+
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .command {
+      color: #b794f4;
+      font-weight: 600;
+    }
+
+    .example {
+      background: #f7fafc;
+      border-left: 4px solid #805ad5;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip {
+      background: #faf5ff;
+      border-left: 4px solid #6b46c1;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip::before {
+      content: "💡 ";
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+    
+    <h1><span class="icon">🏷️</span> Docker Labels</h1>
+    
+    <p>The <strong>LABEL</strong> instruction in Dockerfile adds metadata to Docker images as key-value pairs. Labels are essential for documentation, automation, and organization.</p>
+
+    <h2>Basic Syntax</h2>
+    <div class="code-block">
+LABEL <span class="command">&lt;key&gt;=&lt;value&gt; &lt;key&gt;=&lt;value&gt; ...</span>
+    </div>
+
+    <h2>Common Use Cases</h2>
+    
+    <div class="example">
+      <h3>Basic Labels</h3>
+      <div class="code-block">
+LABEL <span class="command">version="1.0.0"</span>
+LABEL <span class="command">maintainer="devops@company.com"</span>
+LABEL <span class="command">description="Production web server"</span>
+      </div>
+      <p>Basic metadata about the image</p>
+    </div>
+
+    <div class="example">
+      <h3>OCI Standard Labels</h3>
+      <div class="code-block">
+LABEL <span class="command">org.opencontainers.image.created="2024-02-15"</span> \
+      <span class="command">org.opencontainers.image.version="1.0.0"</span> \
+      <span class="command">org.opencontainers.image.authors="DevOps Team"</span> \
+      <span class="command">org.opencontainers.image.description="Web Application"</span>
+      </div>
+      <p>Industry-standard OCI labels for better compatibility</p>
+    </div>
+
+    <div class="example">
+      <h3>Multi-line Labels</h3>
+      <div class="code-block">
+LABEL <span class="command">version="1.0.0"</span> \
+      <span class="command">build-date="2024-02-15"</span> \
+      <span class="command">maintainer="devops@company.com"</span> \
+      <span class="command">description="Production API Server"</span>
+      </div>
+      <p>Organize multiple labels for better readability</p>
+    </div>
+
+    <h2>View Labels</h2>
+    <div class="code-block">
+# View all labels
+<span class="command">docker inspect myimage:tag | jq '.[0].Config.Labels'</span>
+
+# View specific label
+<span class="command">docker inspect myimage:tag | jq -r '.[0].Config.Labels["version"]'</span>
+
+# List all labels as key=value
+<span class="command">docker inspect myimage:tag | jq -r '.[0].Config.Labels | to_entries[] | "\(.key)=\(.value)"'</span>
+    </div>
+
+    <h2>Filter by Labels</h2>
+    <div class="code-block">
+# Filter images by label
+<span class="command">docker images --filter "label=version=1.0.0"</span>
+
+# Filter containers by label
+<span class="command">docker ps --filter "label=environment=production"</span>
+    </div>
+
+    <h2>Complete Example</h2>
+    <div class="code-block">
+FROM nginx:alpine
+
+LABEL <span class="command">org.opencontainers.image.created="2024-02-15T10:00:00Z"</span> \
+      <span class="command">org.opencontainers.image.version="1.0.0"</span> \
+      <span class="command">org.opencontainers.image.authors="DevOps Navigator"</span> \
+      <span class="command">org.opencontainers.image.title="Web Server"</span> \
+      <span class="command">org.opencontainers.image.description="Production web server"</span> \
+      <span class="command">org.opencontainers.image.vendor="Company Inc"</span> \
+      <span class="command">org.opencontainers.image.license="MIT"</span>
+
+COPY index.html /usr/share/nginx/html/
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+    </div>
+
+    <h2>Common Label Categories</h2>
+    <ul style="font-size: 18px; line-height: 2; color: #4a5568; margin: 20px 0 20px 40px;">
+      <li><strong>Version Information:</strong> version, build-date, git-commit</li>
+      <li><strong>Maintainer Info:</strong> maintainer, team, contact</li>
+      <li><strong>Documentation:</strong> description, documentation-url, source-url</li>
+      <li><strong>Environment:</strong> environment, deployment-stage</li>
+      <li><strong>Compliance:</strong> license, vendor, security-scan-status</li>
+      <li><strong>Build Info:</strong> build-tool, ci-build-number</li>
+    </ul>
+
+    <div class="tip">
+      <strong>Pro Tip:</strong> Use OCI standard labels (org.opencontainers.image.*) for better compatibility with tools and registries.
+    </div>
+
+    <h2>Dynamic Labels with Build Args</h2>
+    <div class="code-block">
+ARG <span class="command">BUILD_DATE</span>
+ARG <span class="command">VERSION</span>
+ARG <span class="command">GIT_COMMIT</span>
+
+FROM nginx:alpine
+
+LABEL <span class="command">build.date="${BUILD_DATE}"</span> \
+      <span class="command">version="${VERSION}"</span> \
+      <span class="command">git.commit="${GIT_COMMIT}"</span>
+
+# Build command:
+# docker build \
+#   --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+#   --build-arg VERSION=1.0.0 \
+#   --build-arg GIT_COMMIT=$(git rev-parse HEAD) \
+#   -t myapp:1.0.0 .
+    </div>
+
+    <div class="tip">
+      <strong>Best Practice:</strong> Use labels for metadata, monitoring, and automation. Never store sensitive information like passwords in labels.
+    </div>
+
+    <h2>Benefits of Labels</h2>
+    <ul style="font-size: 18px; line-height: 2; color: #4a5568; margin: 20px 0 20px 40px;">
+      <li><strong>Documentation:</strong> Self-documenting images</li>
+      <li><strong>Automation:</strong> CI/CD can read labels for decisions</li>
+      <li><strong>Organization:</strong> Filter and group images</li>
+      <li><strong>Monitoring:</strong> Track versions in production</li>
+      <li><strong>Compliance:</strong> License and security tracking</li>
+    </ul>
+  </div>
+</body>
+</html>

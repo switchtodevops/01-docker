@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Navigator - Docker Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 50px 60px;
+      border-radius: 20px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 60px;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 48px;
+      color: #2d3748;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 24px;
+      color: #4a5568;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 18px;
+      color: #718096;
+      margin-bottom: 30px;
+    }
+
+    .version-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 20px 0;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .version-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .info-section {
+      margin-top: 40px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      color: #2d3748;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .link-card {
+      background: linear-gradient(135deg, #f6f8fb 0%, #ffffff 100%);
+      border: 2px solid #e2e8f0;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: block;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .link-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      border-color: #667eea;
+    }
+
+    .link-card .icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .link-card .title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .link-card .description {
+      font-size: 14px;
+      color: #718096;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 2px solid #e2e8f0;
+    }
+
+    .footer p {
+      color: #718096;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .footer strong {
+      color: #4a5568;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 25px;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .links-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">🚀</div>
+    
+    <h1>DevOps Navigator</h1>
+    
+    <h2>Docker Image BUILD, RUN, TAG and PUSH to Docker Hub</h2>
+    
+    <p class="subtitle">Learn technology through practical, real-world demos.</p>
+
+    <div class="version-section">
+      <div class="version-badge">Application Version: v2</div>
+    </div>
+
+    <div class="info-section">
+      <p class="section-title">What You'll Master:</p>
+
+      <div class="links-grid">
+        <a href="/app-files/docker-build.html" class="link-card">
+          <div class="icon">🐳</div>
+          <div class="title">Docker Build</div>
+          <div class="description">Learn to build Docker images</div>
+        </a>
+
+        <a href="/app-files/docker-run.html" class="link-card">
+          <div class="icon">▶️</div>
+          <div class="title">Docker Run</div>
+          <div class="description">Run containers from images</div>
+        </a>
+
+        <a href="/app-files/docker-tag.html" class="link-card">
+          <div class="icon">🏷️</div>
+          <div class="title">Docker Tag</div>
+          <div class="description">Tag images for organization</div>
+        </a>
+
+        <a href="/app-files/docker-push.html" class="link-card">
+          <div class="icon">📤</div>
+          <div class="title">Docker Push</div>
+          <div class="description">Push images to registries</div>
+        </a>
+
+        <a href="/app-files/docker-labels.html" class="link-card">
+          <div class="icon">🏷️</div>
+          <div class="title">Docker Labels</div>
+          <div class="description">Add metadata to images</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p><strong>Powered by Nginx + Docker</strong></p>
+      <p>Built with ❤️ for DevOps Engineers</p>
+      <p style="margin-top: 20px; font-size: 14px; color: #a0aec0;">
+        This demo uses COPY instruction to copy HTML files
+      </p>
+    </div>
+  </div>
+
+  <script>
+    console.log('%c🚀 DevOps Navigator', 'font-size: 24px; color: #667eea; font-weight: bold;');
+    console.log('%cVersion: v2', 'font-size: 16px; color: #764ba2;');
+    console.log('%cClick the cards to learn Docker!', 'font-size: 14px; color: #4a5568;');
+  </script>
+</body>
+</html>

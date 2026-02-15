@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Tag - DevOps Navigator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-btn {
+      display: inline-block;
+      background: #ed8936;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #dd6b20;
+      transform: translateX(-5px);
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #2d3748;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon {
+      font-size: 60px;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #4a5568;
+      margin: 30px 0 15px;
+      border-bottom: 3px solid #ed8936;
+      padding-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #4a5568;
+      margin-bottom: 15px;
+    }
+
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .command {
+      color: #ed8936;
+      font-weight: 600;
+    }
+
+    .example {
+      background: #f7fafc;
+      border-left: 4px solid #ed8936;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip {
+      background: #fffaf0;
+      border-left: 4px solid #dd6b20;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip::before {
+      content: "💡 ";
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+    
+    <h1><span class="icon">🏷️</span> Docker Tag</h1>
+    
+    <p>The <strong>docker tag</strong> command creates a new tag for an existing image. Tags are used to identify and version Docker images.</p>
+
+    <h2>Basic Syntax</h2>
+    <div class="code-block">
+      <span class="command">docker tag</span> SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+    </div>
+
+    <h2>Common Commands</h2>
+    
+    <div class="example">
+      <h3>Tag with version</h3>
+      <div class="code-block">
+        <span class="command">docker tag myapp:latest myapp:1.0.0</span>
+      </div>
+      <p>Creates a new tag "1.0.0" pointing to the same image as "latest"</p>
+    </div>
+
+    <div class="example">
+      <h3>Tag for Docker Hub</h3>
+      <div class="code-block">
+        <span class="command">docker tag myapp:1.0.0 username/myapp:1.0.0</span>
+      </div>
+      <p>Prepares image for pushing to Docker Hub with username</p>
+    </div>
+
+    <div class="example">
+      <h3>Tag for private registry</h3>
+      <div class="code-block">
+        <span class="command">docker tag myapp:1.0.0 registry.company.com/myapp:1.0.0</span>
+      </div>
+      <p>Tags image for pushing to private registry</p>
+    </div>
+
+    <div class="example">
+      <h3>Multiple tags</h3>
+      <div class="code-block">
+<span class="command">docker tag myapp:1.0.0 myapp:1.0
+docker tag myapp:1.0.0 myapp:1
+docker tag myapp:1.0.0 myapp:latest</span>
+      </div>
+      <p>Creates multiple tags for different versioning levels</p>
+    </div>
+
+    <h2>Tagging Best Practices</h2>
+    <ul style="font-size: 18px; line-height: 2; color: #4a5568; margin: 20px 0 20px 40px;">
+      <li><strong>Semantic Versioning:</strong> Use MAJOR.MINOR.PATCH format (1.0.0)</li>
+      <li><strong>Git Commit SHA:</strong> Tag with commit hash for traceability</li>
+      <li><strong>Environment Tags:</strong> Use dev, staging, prod for environments</li>
+      <li><strong>Date Tags:</strong> Include build date (2024-02-15)</li>
+      <li><strong>Avoid "latest" in Production:</strong> Always use specific versions</li>
+    </ul>
+
+    <div class="tip">
+      <strong>Pro Tip:</strong> Use multiple tags to support different versioning strategies. For example, tag as both "1.2.3" and "1.2" and "1" for flexibility.
+    </div>
+
+    <h2>Tagging Strategy Example</h2>
+    <div class="code-block">
+# Build the image
+<span class="command">docker build -t myapp:latest .</span>
+
+# Tag with semantic version
+<span class="command">docker tag myapp:latest myapp:1.2.3</span>
+
+# Tag with minor version
+<span class="command">docker tag myapp:latest myapp:1.2</span>
+
+# Tag with major version
+<span class="command">docker tag myapp:latest myapp:1</span>
+
+# Tag with git commit
+<span class="command">docker tag myapp:latest myapp:abc123</span>
+
+# Tag for Docker Hub
+<span class="command">docker tag myapp:latest username/myapp:1.2.3</span>
+    </div>
+
+    <div class="tip">
+      <strong>Best Practice:</strong> In CI/CD pipelines, automatically tag images with build number, git commit SHA, and semantic version for complete traceability.
+    </div>
+
+    <h2>View All Tags</h2>
+    <div class="code-block">
+# List all images and tags
+<span class="command">docker images</span>
+
+# Filter by repository
+<span class="command">docker images myapp</span>
+
+# Show only image IDs
+<span class="command">docker images -q myapp</span>
+    </div>
+  </div>
+</body>
+</html>
