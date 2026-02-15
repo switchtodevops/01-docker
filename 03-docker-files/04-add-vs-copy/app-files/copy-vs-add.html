@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COPY vs ADD - DevOps Navigator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-btn {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #764ba2;
+      transform: translateX(-5px);
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #2d3748;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon {
+      font-size: 60px;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #4a5568;
+      margin: 30px 0 15px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 22px;
+      color: #4a5568;
+      margin: 20px 0 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #4a5568;
+      margin-bottom: 15px;
+    }
+
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 16px;
+    }
+
+    .command {
+      color: #9f7aea;
+      font-weight: 600;
+    }
+
+    .comment {
+      color: #68d391;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .comparison-card {
+      background: #f7fafc;
+      border: 3px solid #e2e8f0;
+      border-radius: 15px;
+      padding: 25px;
+    }
+
+    .comparison-card.copy {
+      border-color: #48bb78;
+    }
+
+    .comparison-card.add {
+      border-color: #f6ad55;
+    }
+
+    .comparison-card h3 {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .comparison-card.copy h3 {
+      color: #38a169;
+    }
+
+    .comparison-card.add h3 {
+      color: #dd6b20;
+    }
+
+    .example {
+      background: #f7fafc;
+      border-left: 4px solid #667eea;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip {
+      background: #ebf8ff;
+      border-left: 4px solid #4299e1;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .tip::before {
+      content: "💡 ";
+      font-size: 20px;
+    }
+
+    .warning {
+      background: #fffaf0;
+      border-left: 4px solid #ed8936;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .warning::before {
+      content: "⚠️ ";
+      font-size: 20px;
+    }
+
+    .success {
+      background: #f0fff4;
+      border-left: 4px solid #48bb78;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .success::before {
+      content: "✅ ";
+      font-size: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 16px;
+    }
+
+    th {
+      background: #667eea;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    tr:hover {
+      background: #f7fafc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 15px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .badge.green {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+
+    .badge.orange {
+      background: #feebc8;
+      color: #7c2d12;
+    }
+
+    @media (max-width: 768px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+    
+    <h1><span class="icon">📋</span> COPY vs ADD Instructions</h1>
+    
+    <p>Understanding the difference between <strong>COPY</strong> and <strong>ADD</strong> is crucial for writing efficient, secure, and maintainable Dockerfiles.</p>
+
+    <h2>Quick Comparison</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>COPY</th>
+          <th>ADD</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Copy local files</strong></td>
+          <td>✅ Yes</td>
+          <td>✅ Yes</td>
+        </tr>
+        <tr>
+          <td><strong>Copy directories</strong></td>
+          <td>✅ Yes</td>
+          <td>✅ Yes</td>
+        </tr>
+        <tr>
+          <td><strong>Auto-extract tar files</strong></td>
+          <td>❌ No</td>
+          <td>✅ Yes</td>
+        </tr>
+        <tr>
+          <td><strong>Download from URLs</strong></td>
+          <td>❌ No</td>
+          <td>✅ Yes (not recommended)</td>
+        </tr>
+        <tr>
+          <td><strong>Transparency</strong></td>
+          <td>✅ High</td>
+          <td>⚠️ Lower</td>
+        </tr>
+        <tr>
+          <td><strong>Security</strong></td>
+          <td>✅ Safer</td>
+          <td>⚠️ Risk if misused</td>
+        </tr>
+        <tr>
+          <td><strong>Recommended</strong></td>
+          <td>✅ Yes (default choice)</td>
+          <td>⚠️ Only for tar extraction</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>The Golden Rule</h2>
+    
+    <div class="success">
+      <strong>Industry Standard:</strong> Use COPY unless you specifically need ADD's tar extraction feature. Never use ADD for URLs.
+    </div>
+
+    <h2>Detailed Comparison</h2>
+
+    <div class="comparison-grid">
+      <div class="comparison-card copy">
+        <h3>📄 COPY Instruction</h3>
+        <p><strong>Purpose:</strong> Simple, transparent file copying</p>
+        
+        <h4 style="margin-top: 20px;">When to Use:</h4>
+        <ul style="font-size: 16px; line-height: 1.8; margin: 10px 0 10px 20px;">
+          <li>Application source code</li>
+          <li>Configuration files</li>
+          <li>Static assets</li>
+          <li>Dependency manifests</li>
+          <li>95% of all use cases</li>
+        </ul>
+        
+        <h4 style="margin-top: 20px;">Benefits:</h4>
+        <ul style="font-size: 16px; line-height: 1.8; margin: 10px 0 10px 20px;">
+          <li>Predictable behavior</li>
+          <li>No surprises</li>
+          <li>More secure</li>
+          <li>Docker recommended</li>
+        </ul>
+      </div>
+
+      <div class="comparison-card add">
+        <h3>➕ ADD Instruction</h3>
+        <p><strong>Purpose:</strong> Copy with special features</p>
+        
+        <h4 style="margin-top: 20px;">When to Use:</h4>
+        <ul style="font-size: 16px; line-height: 1.8; margin: 10px 0 10px 20px;">
+          <li>Extracting tar archives</li>
+          <li>Vendor-provided packages</li>
+          <li>Legacy applications</li>
+          <li>Only 5% of use cases</li>
+        </ul>
+        
+        <h4 style="margin-top: 20px;">Cautions:</h4>
+        <ul style="font-size: 16px; line-height: 1.8; margin: 10px 0 10px 20px;">
+          <li>Auto-extraction can be surprising</li>
+          <li>URL downloads not cached</li>
+          <li>Less transparent</li>
+          <li>Higher security risk</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Syntax</h2>
+
+    <h3>COPY Syntax</h3>
+    <div class="code-block">
+<span class="command">COPY</span> [--chown=&lt;user&gt;:&lt;group&gt;] &lt;src&gt;... &lt;dest&gt;
+<span class="command">COPY</span> [--chown=&lt;user&gt;:&lt;group&gt;] ["&lt;src&gt;",... "&lt;dest&gt;"]
+
+<span class="comment"># Copy from another build stage</span>
+<span class="command">COPY --from=&lt;stage&gt;</span> &lt;src&gt; &lt;dest&gt;
+    </div>
+
+    <h3>ADD Syntax</h3>
+    <div class="code-block">
+<span class="command">ADD</span> [--chown=&lt;user&gt;:&lt;group&gt;] &lt;src&gt;... &lt;dest&gt;
+<span class="command">ADD</span> [--chown=&lt;user&gt;:&lt;group&gt;] ["&lt;src&gt;",... "&lt;dest&gt;"]
+    </div>
+
+    <h2>Examples</h2>
+
+    <div class="example">
+      <h3>✅ Use COPY - Application Code</h3>
+      <div class="code-block">
+FROM node:18-alpine
+
+WORKDIR /app
+
+<span class="comment"># Copy dependency files first</span>
+<span class="command">COPY</span> package.json package-lock.json ./
+
+<span class="comment"># Install dependencies</span>
+RUN npm ci --only=production
+
+<span class="comment"># Copy application code</span>
+<span class="command">COPY</span> . .
+
+CMD ["node", "server.js"]
+      </div>
+      <p><strong>Why COPY?</strong> Simple file copying, predictable, secure.</p>
+    </div>
+
+    <div class="example">
+      <h3>✅ Use COPY - Multi-Stage Build</h3>
+      <div class="code-block">
+<span class="comment"># Build stage</span>
+FROM golang:1.21 AS builder
+WORKDIR /build
+<span class="command">COPY</span> . .
+RUN go build -o app
+
+<span class="comment"># Production stage</span>
+FROM alpine:3.18
+<span class="command">COPY --from=builder</span> /build/app /usr/local/bin/app
+CMD ["/usr/local/bin/app"]
+      </div>
+      <p><strong>Why COPY?</strong> Copying from build stages is standard practice.</p>
+    </div>
+
+    <div class="example">
+      <h3>✅ Use COPY - With Ownership</h3>
+      <div class="code-block">
+FROM python:3.11-slim
+
+RUN useradd -r -u 1001 appuser
+
+WORKDIR /app
+
+<span class="comment"># Copy with ownership (more efficient than separate chown)</span>
+<span class="command">COPY --chown=appuser:appuser</span> . .
+
+USER appuser
+
+CMD ["python", "app.py"]
+      </div>
+      <p><strong>Why COPY?</strong> Setting ownership during copy is more efficient.</p>
+    </div>
+
+    <div class="example">
+      <h3>⚠️ Use ADD - Tar Extraction</h3>
+      <div class="code-block">
+FROM ubuntu:22.04
+
+<span class="comment"># ADD automatically extracts local tar files</span>
+<span class="command">ADD</span> vendor-app-v1.2.3.tar.gz /opt/vendor/
+
+<span class="comment"># Equivalent with COPY would require:</span>
+<span class="comment"># COPY vendor-app-v1.2.3.tar.gz /tmp/</span>
+<span class="comment"># RUN tar -xzf /tmp/vendor-app-v1.2.3.tar.gz -C /opt/vendor/ && \</span>
+<span class="comment">#     rm /tmp/vendor-app-v1.2.3.tar.gz</span>
+
+WORKDIR /opt/vendor
+CMD ["./start.sh"]
+      </div>
+      <p><strong>When to use ADD?</strong> Only when you need automatic tar extraction.</p>
+    </div>
+
+    <h2>Key Differences Explained</h2>
+
+    <h3>1. Local Files (Same Behavior)</h3>
+    <div class="code-block">
+<span class="comment"># COPY and ADD work identically for regular files</span>
+<span class="command">COPY</span> app.py /app/         <span class="comment"># ✅ Recommended</span>
+<span class="command">ADD</span> app.py /app/          <span class="comment"># ⚠️ Works but not recommended</span>
+    </div>
+
+    <h3>2. Tar Archives (Different Behavior)</h3>
+    <div class="code-block">
+<span class="comment"># COPY keeps tar file as-is</span>
+<span class="command">COPY</span> archive.tar.gz /app/
+<span class="comment"># Result: /app/archive.tar.gz (file exists)</span>
+
+<span class="comment"># ADD extracts tar file automatically</span>
+<span class="command">ADD</span> archive.tar.gz /app/
+<span class="comment"># Result: /app/ contains extracted contents (no tar file)</span>
+    </div>
+
+    <h3>3. URLs (ADD Only)</h3>
+    <div class="code-block">
+<span class="comment"># COPY cannot download from URLs</span>
+<span class="command">COPY</span> https://example.com/file.txt /app/  <span class="comment"># ❌ ERROR</span>
+
+<span class="comment"># ADD can download (but not recommended)</span>
+<span class="command">ADD</span> https://example.com/file.txt /app/   <span class="comment"># ⚠️ Works but avoid</span>
+
+<span class="comment"># Better: Use RUN with curl/wget</span>
+RUN curl -fsSL https://example.com/file.txt -o /app/file.txt  <span class="comment"># ✅ Best</span>
+    </div>
+
+    <h2>Real-World Scenarios</h2>
+
+    <div class="example">
+      <h3>Scenario 1: Deploying a Web Application</h3>
+      <div class="code-block">
+FROM nginx:alpine
+
+<span class="comment"># ✅ Use COPY for HTML files (this project!)</span>
+<span class="command">COPY</span> index.html /usr/share/nginx/html/
+<span class="command">COPY</span> app-files/ /usr/share/nginx/html/app-files/
+
+<span class="comment"># ✅ Use COPY for nginx config</span>
+<span class="command">COPY</span> nginx.conf /etc/nginx/nginx.conf
+
+CMD ["nginx", "-g", "daemon off;"]
+      </div>
+      <p><span class="badge green">COPY</span> Perfect for web applications</p>
+    </div>
+
+    <div class="example">
+      <h3>Scenario 2: Building a Node.js Application</h3>
+      <div class="code-block">
+FROM node:18-alpine
+
+WORKDIR /app
+
+<span class="comment"># ✅ Use COPY for package files</span>
+<span class="command">COPY</span> package*.json ./
+
+RUN npm ci --only=production
+
+<span class="comment"># ✅ Use COPY for source code</span>
+<span class="command">COPY</span> --chown=node:node . .
+
+USER node
+
+CMD ["node", "server.js"]
+      </div>
+      <p><span class="badge green">COPY</span> Standard for Node.js apps</p>
+    </div>
+
+    <div class="example">
+      <h3>Scenario 3: Vendor-Provided Archive</h3>
+      <div class="code-block">
+FROM ubuntu:22.04
+
+<span class="comment"># ⚠️ Valid use of ADD for tar extraction</span>
+<span class="command">ADD</span> oracle-database-12c.tar.gz /opt/oracle/
+
+WORKDIR /opt/oracle
+
+<span class="comment"># ✅ Use COPY for your config files</span>
+<span class="command">COPY</span> custom-config.xml ./config/
+
+CMD ["./startup.sh"]
+      </div>
+      <p><span class="badge orange">ADD</span> Acceptable for vendor tar archives</p>
+    </div>
+
+    <h2>Common Mistakes</h2>
+
+    <div class="warning">
+      <strong>Mistake 1: Using ADD for regular files</strong>
+      <div class="code-block" style="margin-top: 10px;">
+<span class="comment"># ❌ Bad - Using ADD unnecessarily</span>
+<span class="command">ADD</span> app.py /app/
+<span class="command">ADD</span> config.json /app/
+
+<span class="comment"># ✅ Good - Use COPY instead</span>
+<span class="command">COPY</span> app.py /app/
+<span class="command">COPY</span> config.json /app/
+      </div>
+    </div>
+
+    <div class="warning">
+      <strong>Mistake 2: Using ADD for URLs</strong>
+      <div class="code-block" style="margin-top: 10px;">
+<span class="comment"># ❌ Bad - No verification, no caching</span>
+<span class="command">ADD</span> https://example.com/package.tar.gz /tmp/
+
+<span class="comment"># ✅ Good - Verify checksum, better caching</span>
+RUN curl -fsSL https://example.com/package.tar.gz -o /tmp/package.tar.gz && \
+    echo "abc123... /tmp/package.tar.gz" | sha256sum -c -
+      </div>
+    </div>
+
+    <div class="warning">
+      <strong>Mistake 3: Not using .dockerignore</strong>
+      <div class="code-block" style="margin-top: 10px;">
+<span class="comment"># Without .dockerignore, this copies everything!</span>
+<span class="command">COPY</span> . /app/
+<span class="comment"># Result: Copies node_modules, .git, tests, etc.</span>
+
+<span class="comment"># Create .dockerignore file:</span>
+<span class="comment"># node_modules/</span>
+<span class="comment"># .git/</span>
+<span class="comment"># tests/</span>
+<span class="comment"># *.md</span>
+      </div>
+    </div>
+
+    <h2>Best Practices</h2>
+
+    <div class="success">
+      <strong>Practice 1: Always prefer COPY</strong><br>
+      Use COPY by default for all file operations unless you have a specific reason to use ADD.
+    </div>
+
+    <div class="success">
+      <strong>Practice 2: Copy in order of change frequency</strong><br>
+      Copy dependency files first, then source code. This optimizes Docker layer caching.
+    </div>
+
+    <div class="success">
+      <strong>Practice 3: Set ownership during copy</strong><br>
+      Use <code>--chown</code> flag to set ownership in one step instead of separate RUN chown.
+    </div>
+
+    <div class="success">
+      <strong>Practice 4: Use .dockerignore</strong><br>
+      Exclude unnecessary files to speed up builds and reduce image size.
+    </div>
+
+    <h2>Production Example</h2>
+
+    <div class="code-block">
+<span class="comment"># syntax=docker/dockerfile:1</span>
+
+<span class="comment"># Build stage</span>
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+<span class="comment"># ✅ COPY package files first (better caching)</span>
+<span class="command">COPY</span> package.json package-lock.json ./
+RUN npm ci
+
+<span class="comment"># ✅ COPY source code</span>
+<span class="command">COPY</span> . .
+RUN npm run build
+
+<span class="comment"># Production stage</span>
+FROM node:18-alpine
+
+<span class="comment"># Create non-root user</span>
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+<span class="comment"># ✅ COPY built artifacts from builder</span>
+<span class="command">COPY --from=builder --chown=nodejs:nodejs</span> /app/dist ./dist
+<span class="command">COPY --from=builder --chown=nodejs:nodejs</span> /app/node_modules ./node_modules
+
+USER nodejs
+
+ENV NODE_ENV=production
+
+EXPOSE 3000
+
+CMD ["node", "dist/server.js"]
+    </div>
+
+    <h2>When ADD is Acceptable</h2>
+
+    <div class="example">
+      <h3>Scenario: Extracting Vendor Archives</h3>
+      <div class="code-block">
+FROM ubuntu:22.04
+
+<span class="comment"># Vendor provides: database-v10.2.tar.gz</span>
+<span class="comment"># ✅ ADD is acceptable here for automatic extraction</span>
+<span class="command">ADD</span> database-v10.2.tar.gz /opt/database/
+
+WORKDIR /opt/database
+
+<span class="comment"># ✅ Use COPY for your custom scripts</span>
+<span class="command">COPY</span> init-script.sh ./scripts/
+<span class="command">COPY</span> config.xml ./config/
+
+RUN useradd -r dbuser && \
+    chown -R dbuser:dbuser /opt/database
+
+USER dbuser
+
+CMD ["./bin/start-database.sh"]
+      </div>
+      <p>This is one of the few valid use cases for ADD in production.</p>
+    </div>
+
+    <h2>This Project Uses COPY</h2>
+
+    <div class="tip">
+      This entire project demonstrates <strong>COPY instruction</strong> best practices:
+    </div>
+
+    <div class="code-block">
+<span class="comment"># From this project's Dockerfile</span>
+
+<span class="comment"># ✅ Copy main index page</span>
+<span class="command">COPY</span> index.html /usr/share/nginx/html/
+
+<span class="comment"># ✅ Copy entire directory with linked pages</span>
+<span class="command">COPY</span> ../app-files/ /usr/share/nginx/html/app-files/
+
+<span class="comment"># Result: Multi-page website with working hyperlinks</span>
+<span class="comment"># All files copied using COPY instruction (not ADD)</span>
+    </div>
+
+    <h2>Summary</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Use Case</th>
+          <th>Instruction</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Application code</td>
+          <td><span class="badge green">COPY</span></td>
+          <td>Standard, secure, predictable</td>
+        </tr>
+        <tr>
+          <td>Configuration files</td>
+          <td><span class="badge green">COPY</span></td>
+          <td>Simple, transparent</td>
+        </tr>
+        <tr>
+          <td>Static assets</td>
+          <td><span class="badge green">COPY</span></td>
+          <td>No special features needed</td>
+        </tr>
+        <tr>
+          <td>From build stage</td>
+          <td><span class="badge green">COPY</span></td>
+          <td>Only COPY supports --from</td>
+        </tr>
+        <tr>
+          <td>Extract tar archive</td>
+          <td><span class="badge orange">ADD</span></td>
+          <td>Automatic extraction</td>
+        </tr>
+        <tr>
+          <td>Download from URL</td>
+          <td><span class="badge green">COPY</span></td>
+          <td>Use RUN curl instead of ADD</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Key Takeaways</h2>
+
+    <div class="success">
+      ✅ <strong>Use COPY by default</strong> - It's the industry standard for 95% of use cases
+    </div>
+
+    <div class="success">
+      ✅ <strong>Use ADD only for tar extraction</strong> - When you need automatic archive extraction
+    </div>
+
+    <div class="warning">
+      ⚠️ <strong>Never use ADD for URLs</strong> - Use RUN with curl/wget for better security and caching
+    </div>
+
+    <div class="tip">
+      <strong>Docker Official Recommendation:</strong> Because image size matters, using ADD to fetch packages from remote URLs is strongly discouraged. Use RUN with curl or wget instead.
+    </div>
+
+    <h2>Learn More</h2>
+
+    <p>For complete details, examples, and production patterns, see the comprehensive guide:</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="../add-vs-copy.md" style="
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 18px;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s;
+      " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        📚 Read Complete ADD vs COPY Guide
+      </a>
+    </div>
+
+    <h2>Quick Reference</h2>
+
+    <div class="code-block">
+<span class="comment"># Copy single file</span>
+<span class="command">COPY</span> app.py /app/
+
+<span class="comment"># Copy directory</span>
+<span class="command">COPY</span> src/ /app/src/
+
+<span class="comment"># Copy multiple files</span>
+<span class="command">COPY</span> file1 file2 file3 /app/
+
+<span class="comment"># Copy with ownership</span>
+<span class="command">COPY --chown=user:group</span> . /app/
+
+<span class="comment"># Copy from build stage</span>
+<span class="command">COPY --from=builder</span> /app/dist ./dist
+
+<span class="comment"># Extract tar archive (rare use case)</span>
+<span class="command">ADD</span> archive.tar.gz /opt/app/
+    </div>
+
+    <div class="footer" style="margin-top: 50px; padding-top: 30px; border-top: 2px solid #e2e8f0; text-align: center;">
+      <p style="color: #718096; font-size: 16px;">
+        <strong style="color: #4a5568;">Remember:</strong> This project uses COPY instruction to demonstrate best practices!
+      </p>
+      <p style="color: #718096; font-size: 14px; margin-top: 15px;">
+        Built with ❤️ for DevOps Engineers
+      </p>
+    </div>
+  </div>
+</body>
+</html>
