@@ -50,12 +50,12 @@ docker logout
 
 | Command | Purpose |
 |---------|---------|
-| `docker images` | List images on the local host |
-| `docker pull` | Download an image from a registry |
-| `docker push` | Upload an image to a registry |
+| **`docker images`** | List images on the local host |
+| **`docker pull`** | Download an image from a registry |
+| **`docker push`** | Upload an image to a registry |
 | `docker search` | Search Docker Hub for images |
-| `docker tag` | Create a new tag (alias) for an image |
-| `docker rmi` | Remove one or more images |
+| **`docker tag`** | Create a new tag (alias) for an image |
+| **`docker rmi`** | Remove one or more images |
 | `docker save` | Export image(s) to a tar archive |
 | `docker load` | Import image(s) from a tar archive |
 | `docker history` | Show layers and build history of an image |
