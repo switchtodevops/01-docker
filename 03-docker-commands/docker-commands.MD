@@ -53,7 +53,7 @@ docker logout
 | **`docker images`** | List images on the local host |
 | **`docker pull`** | Download an image from a registry |
 | **`docker push`** | Upload an image to a registry |
-| `docker search` | Search Docker Hub for images |
+| **`docker search`** | Search Docker Hub for images |
 | **`docker tag`** | Create a new tag (alias) for an image |
 | **`docker rmi`** | Remove one or more images |
 | `docker save` | Export image(s) to a tar archive |
@@ -132,16 +132,16 @@ docker bake mytarget
 
 | Command | Purpose |
 |---------|---------|
-| `docker run` | Create **and** start a container |
+| **`docker run`** | Create **and** start a container |
 | `docker create` | Create a container without starting it |
-| `docker start` | Start a stopped container |
-| `docker stop` | Gracefully stop a running container |
-| `docker restart` | Stop then start a container |
-| `docker kill` | Force-stop a container (SIGKILL) |
-| `docker pause` | Pause all processes in a container |
-| `docker unpause` | Resume a paused container |
-| `docker rm` | Remove one or more containers |
-| `docker rename` | Rename a container |
+| **`docker start`** | Start a stopped container |
+| **`docker stop`** | Gracefully stop a running container |
+| **`docker restart`** | Stop then start a container |
+| **`docker kill`** | Force-stop a container (SIGKILL) |
+| **`docker pause`** | Pause all processes in a container |
+| **`docker unpause`** | Resume a paused container |
+| **`docker rm`** | Remove one or more containers |
+| **`docker rename`** | Rename a container |
 | `docker wait` | Block until container stops; print exit code |
 | `docker update` | Update resource limits on a running container |
 
