@@ -32,12 +32,12 @@
 | **`docker logout`** | Log out from a registry |
 
 ```bash
-**# Version and system info**
+# Version and system info
 docker version
 docker -v
 docker info
 
-**# Registry authentication**
+# Registry authentication
 docker login                          # prompts for username/password
 docker login -u myuser                # specify username
 docker login registry.example.com     # private registry
