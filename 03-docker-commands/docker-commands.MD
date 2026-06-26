@@ -26,18 +26,18 @@
 | Command | Purpose |
 |---------|---------|
 | **`docker version`** | Show Docker client and server version details |
-| `docker -v` | Show client version only (shortcut) |
-| `docker info` | Display system-wide Docker info (storage, runtime, counts) |
-| `docker login` | Log in to a registry (Docker Hub by default) |
-| `docker logout` | Log out from a registry |
+| **`docker -v`** | Show client version only (shortcut) |
+| **`docker info`** | Display system-wide Docker info (storage, runtime, counts) |
+| **`docker login`** | Log in to a registry (Docker Hub by default) |
+| **`docker logout`** | Log out from a registry |
 
 ```bash
-# Version and system info
+**# Version and system info**
 docker version
 docker -v
 docker info
 
-# Registry authentication
+**# Registry authentication**
 docker login                          # prompts for username/password
 docker login -u myuser                # specify username
 docker login registry.example.com     # private registry
