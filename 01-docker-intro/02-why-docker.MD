@@ -13,12 +13,9 @@
 1. [Introduction (Why & What)](#1-introduction-why--what)
 2. [Internal Working (How)](#2-internal-working-how)
 3. [Real-World Context](#3-real-world-context)
-4. [Hands-On Practice](#4-hands-on-practice)
-5. [Common Mistakes](#5-common-mistakes)
-6. [Best Practices & Security](#6-best-practices--security)
-7. [Interview Preparation](#7-interview-preparation)
-8. [Summary](#8-summary)
-9. [Practice Assignment](#9-practice-assignment)
+4. [Interview Preparation](#4-interview-preparation)
+5. [Summary](#5-summary)
+6. [Quick Reference — Visual Curriculum](#quick-reference--visual-curriculum)
 
 ---
 
@@ -319,66 +316,6 @@ Dockerfile → Docker Image → Container Runtime (containerd) → Kubernetes Po
 
 ---
 
-## 4. Hands-On Practice
-
-### Objective
-
-Verify Docker is installed and experience the speed difference between provisioning a container vs a traditional setup.
-
-### Prerequisites
-
-- Docker Engine installed (Module 01)
-- Terminal access
-
-### Step 1 — Verify Docker Installation
-
-```
-📝 Command: docker version
-├─ Purpose: Confirm Docker client and daemon are running
-├─ Arguments: None required
-├─ Example: docker version
-├─ Shortcut: docker -v  (client version only)
-└─ Industry Use: First check on any new server or CI agent
-```
-
-```bash
-docker version
-```
-
-**Expected output:** Client and Server sections both show version info. If Server shows an error, the Docker daemon is not running.
-
-### Step 2 — Run a Pre-built Container (Nginx)
-
-```
-📝 Command: docker run
-├─ Purpose: Create and start a container from an image
-├─ Arguments:
-│   --name my-nginx    → Assign a friendly name
-│   -p 8080:80         → Map host port 8080 to container port 80
-│   -d                 → Detached mode (run in background)
-│   nginx:latest       → Image name and tag
-├─ Example: docker run --name my-nginx -p 8080:80 -d nginx:latest
-├─ Shortcut: docker run -d -p 8080:80 nginx
-└─ Industry Use: Quick smoke test; running any service from Docker Hub
-```
-
-```bash
-docker run --name my-nginx -p 8080:80 -d nginx:latest
-```
-
-Open `http://localhost:8080` — you should see the Nginx welcome page.
-
-> 💡 **Compare to traditional:** Installing Nginx on a bare server requires package manager, config files, firewall rules, and service management. Docker did it in one command with an isolated environment.
-
-### Step 3 — Inspect the Running Container
-
-```bash
-docker ps
-docker inspect my-nginx --format '{{.State.Status}}'
-```
-
-**Expected output:** Container status is `running`.
-
 ## 4. Interview Preparation
 
 ### Beginner Questions
@@ -475,7 +412,7 @@ A: Add a non-root `USER` in each Dockerfile, use read-only root filesystems, dro
 
 ---
 
-## 8. Summary
+## 5. Summary
 
 ### Key Takeaways
 
@@ -491,6 +428,8 @@ A: Add a non-root `USER` in each Dockerfile, use read-only root filesystems, dro
 > Build once → run anywhere → deploy consistently → scale independently.
 
 For interviews and production: always be ready to explain **why** containers beat traditional deployments (the problems in Section 1) and **how** they differ from VMs (shared kernel, namespaces, cgroups).
+
+---
 
 ---
 
