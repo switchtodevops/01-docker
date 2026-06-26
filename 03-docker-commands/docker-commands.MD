@@ -25,7 +25,7 @@
 
 | Command | Purpose |
 |---------|---------|
-| `docker version` | Show Docker client and server version details |
+| **`docker version`** | Show Docker client and server version details |
 | `docker -v` | Show client version only (shortcut) |
 | `docker info` | Display system-wide Docker info (storage, runtime, counts) |
 | `docker login` | Log in to a registry (Docker Hub by default) |
