@@ -24,3 +24,5 @@ vinod@vinod:~$
 
 What is the size of the nginx image? 66MB
 How much disk space is Docker using for this image on your machine? 241MB 
+
+04 - How vendor create the base images ? for example redhat minimal image ? 

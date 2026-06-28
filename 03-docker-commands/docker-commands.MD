@@ -58,7 +58,7 @@ docker logout
 | **`docker rmi`** | Remove one or more images |
 | `docker save` | Export image(s) to a tar archive |
 | `docker load` | Import image(s) from a tar archive |
-| `docker history` | Show layers and build history of an image |
+| **`docker history`** | Show layers and build history of an image |
 | `docker import` | Create an image from a tarball (not from Dockerfile) |
 
 ```bash
