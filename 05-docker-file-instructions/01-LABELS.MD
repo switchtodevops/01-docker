@@ -1,1237 +1,578 @@
-# LABEL Instruction - Complete Guide
+# Dockerfile LABEL - Crisp Guide
 
-> Everything you need to know about using LABEL in Dockerfiles for metadata, documentation, and image organization.
+Use this page when you want to quickly refresh Docker image labels.
 
-## Table of Contents
+`LABEL` adds metadata to an image as key-value pairs. Labels do not run code, configure the app, or change container behavior by themselves. They help humans, scripts, registries, scanners, CI/CD systems, and platforms understand an image.
 
-1. [Introduction](#introduction)
-2. [Syntax](#syntax)
-3. [How LABEL Works](#how-label-works)
-4. [Industry Standards - OCI Labels](#industry-standards---oci-labels)
-5. [Best Practices](#best-practices)
-6. [Common Use Cases](#common-use-cases)
-7. [Real-World Examples](#real-world-examples)
-8. [Label Management](#label-management)
-9. [Querying and Filtering](#querying-and-filtering)
-10. [Advanced Patterns](#advanced-patterns)
-11. [Complete Production Examples](#complete-production-examples)
-12. [Troubleshooting](#troubleshooting)
-
----
-
-## Introduction
-
-### What is LABEL?
-
-The `LABEL` instruction adds metadata to Docker images as key-value pairs. Labels are used for:
-- **Documentation** - Author, version, description
-- **Automation** - Build information, CI/CD metadata
-- **Organization** - Grouping and filtering images
-- **Compliance** - License, security, audit information
-- **Discovery** - Service mesh, monitoring tools
-
-### Why Use Labels?
+## Quick Memory
 
 ```dockerfile
-# ❌ Without labels - No metadata
-FROM nginx:latest
-COPY . /usr/share/nginx/html
+LABEL key="value"
+LABEL key1="value1" key2="value2"
 
-# ✅ With labels - Rich metadata
+LABEL org.opencontainers.image.title="api-service" \
+      org.opencontainers.image.version="1.2.3" \
+      org.opencontainers.image.source="https://github.com/company/api"
+```
+
+Think of labels as image metadata:
+
+- Who owns this image?
+- What version is it?
+- Where is the source code?
+- When was it built?
+- Which git commit created it?
+- Which team, service, license, or environment does it belong to?
+
+## Why Labels Matter
+
+Labels are useful for:
+
+- Documentation: title, description, owner, contact.
+- Traceability: version, build date, git commit, CI build URL.
+- Automation: filter images/containers by labels.
+- Governance: license, vendor, compliance, security scan status.
+- Operations: service name, team, support channel, cost center.
+
+Example without labels:
+
+```dockerfile
 FROM nginx:1.25-alpine
-LABEL version="1.2.3" \
-      maintainer="devops@company.com" \
-      description="Production web server" \
-      build-date="2024-02-14"
 COPY . /usr/share/nginx/html
 ```
 
-**Benefits:**
-- 📊 Track versions and builds
-- 🔍 Filter and search images
-- 📝 Document image purpose
-- 🤖 Enable automation
-- ✅ Meet compliance requirements
+Example with useful labels:
 
----
+```dockerfile
+FROM nginx:1.25-alpine
 
-## Syntax
+LABEL org.opencontainers.image.title="static-site" \
+      org.opencontainers.image.description="Company landing page" \
+      org.opencontainers.image.version="1.2.3" \
+      org.opencontainers.image.source="https://github.com/company/site" \
+      org.opencontainers.image.authors="web-team@company.com"
 
-### Basic Syntax
+COPY . /usr/share/nginx/html
+```
+
+## Syntax Rules
+
+Basic syntax:
 
 ```dockerfile
 LABEL <key>=<value>
-LABEL <key>=<value> <key>=<value> ...
+LABEL <key>=<value> <key>=<value>
 ```
 
-### Multiple Forms
+Recommended multi-line style:
 
 ```dockerfile
-# 1. Single label per line
-LABEL version="1.0"
-LABEL maintainer="devops@example.com"
-
-# 2. Multiple labels in one line
-LABEL version="1.0" maintainer="devops@example.com"
-
-# 3. Multi-line format (preferred for readability)
-LABEL version="1.0" \
-      maintainer="devops@example.com" \
-      description="My application" \
-      build-date="2024-02-14"
+LABEL org.opencontainers.image.title="my-app" \
+      org.opencontainers.image.version="1.0.0" \
+      org.opencontainers.image.description="Production API service"
 ```
 
-### Key Naming Conventions
+Important rules:
 
-**Valid Keys:**
-- Can contain lowercase and uppercase letters
-- Can contain digits
-- Can contain periods (.), hyphens (-), underscores (_)
-- Can use reverse DNS notation (recommended)
+- Use quotes when values contain spaces.
+- Use reverse DNS or OCI names for important labels.
+- Group related labels together for readability.
+- Labels are stored in image metadata and can be inspected later.
+- Labels are visible to anyone who can inspect or pull the image.
+
+Avoid this:
 
 ```dockerfile
-# ✅ Good key names
-LABEL version="1.0"
-LABEL com.company.version="1.0"
-LABEL org.opencontainers.image.version="1.0"
-LABEL build_date="2024-02-14"
-LABEL my-custom-label="value"
-
-# ❌ Bad key names (avoid spaces)
-LABEL my label="value"
+LABEL description=Production API service
 ```
 
-### Value Formats
+Use this:
 
 ```dockerfile
-# Simple string
-LABEL version="1.0"
-
-# String with spaces (use quotes)
-LABEL description="This is my application"
-
-# JSON format
-LABEL com.example.metadata='{"key1":"value1","key2":"value2"}'
-
-# Multi-line value (escape newlines)
-LABEL description="Line 1\n\
-Line 2\n\
-Line 3"
-
-# URL
-LABEL org.opencontainers.image.source="https://github.com/company/repo"
-
-# Email
-LABEL maintainer="devops@company.com"
+LABEL description="Production API service"
 ```
 
----
+## Label Keys
 
-## How LABEL Works
-
-### Label Inheritance
-
-Labels are **inherited** from base images:
+Good label keys:
 
 ```dockerfile
-# Base image (mybase)
-FROM ubuntu:22.04
-LABEL base.version="1.0"
-LABEL base.maintainer="base@company.com"
-
-# Child image
-FROM mybase:latest
-LABEL app.version="2.0"
-
-# Result: Child image has 3 labels:
-# - base.version=1.0 (inherited)
-# - base.maintainer=base@company.com (inherited)
-# - app.version=2.0 (added)
+LABEL org.opencontainers.image.version="1.2.3"
+LABEL com.company.team="platform"
+LABEL com.company.cost-center="engineering"
+LABEL app.name="payment-api"
 ```
 
-### Overriding Labels
-
-Labels can be **overridden** by child images:
+Avoid generic keys for serious images:
 
 ```dockerfile
-# Base image
-FROM ubuntu:22.04
-LABEL maintainer="base@company.com"
-
-# Child image - override maintainer
-FROM mybase:latest
-LABEL maintainer="app@company.com"  # Overrides base label
-
-# Result: maintainer=app@company.com
+LABEL version="1.2.3"
+LABEL team="platform"
 ```
 
-### Label Scope
+Generic keys work, but namespaced keys are clearer and safer because base images or tools may use similar names.
 
-- ✅ Labels persist in the final image
-- ✅ Labels are visible to all containers from the image
-- ✅ Labels can be inspected with `docker inspect`
-- ❌ Labels don't affect build performance
-- ❌ Labels aren't visible during build (use ARG for that)
+## Industry Standard: OCI Labels
 
----
+OCI means Open Container Initiative. OCI labels are the common industry standard for container image metadata.
 
-## Industry Standards - OCI Labels
+Use these first when they match your need:
 
-### OCI Image Spec Annotations
+| OCI Label | Meaning | Example |
+|-----------|---------|---------|
+| `org.opencontainers.image.title` | Human-readable image name | `payment-api` |
+| `org.opencontainers.image.description` | Short image purpose | `Payment REST API` |
+| `org.opencontainers.image.version` | App/image version | `1.2.3` |
+| `org.opencontainers.image.created` | Build timestamp in RFC 3339 format | `2026-06-28T09:00:00Z` |
+| `org.opencontainers.image.authors` | Maintainer or team | `team@company.com` |
+| `org.opencontainers.image.source` | Source repository | `https://github.com/company/api` |
+| `org.opencontainers.image.revision` | Git commit SHA | `abc123...` |
+| `org.opencontainers.image.url` | Project/product URL | `https://company.com/api` |
+| `org.opencontainers.image.documentation` | Documentation URL | `https://docs.company.com/api` |
+| `org.opencontainers.image.vendor` | Vendor/company name | `Company Inc` |
+| `org.opencontainers.image.licenses` | License using SPDX format | `MIT`, `Apache-2.0` |
+| `org.opencontainers.image.ref.name` | Tag/branch/reference name | `v1.2.3` |
+| `org.opencontainers.image.base.name` | Base image name | `node:20-alpine` |
+| `org.opencontainers.image.base.digest` | Base image digest | `sha256:...` |
 
-The [Open Container Initiative (OCI)](https://github.com/opencontainers/image-spec/blob/main/annotations.md) defines standard labels:
+## Minimum Recommended Labels
 
-#### Core Labels
+For most production images, start with this set:
 
 ```dockerfile
-LABEL org.opencontainers.image.created="2024-02-14T10:00:00Z" \
-      org.opencontainers.image.authors="DevOps Team <devops@company.com>" \
-      org.opencontainers.image.url="https://company.com" \
-      org.opencontainers.image.documentation="https://docs.company.com" \
-      org.opencontainers.image.source="https://github.com/company/repo" \
+LABEL org.opencontainers.image.title="my-app" \
+      org.opencontainers.image.description="Short purpose of the image" \
       org.opencontainers.image.version="1.2.3" \
-      org.opencontainers.image.revision="abc123def456" \
-      org.opencontainers.image.vendor="Company Inc" \
-      org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.ref.name="v1.2.3" \
-      org.opencontainers.image.title="My Application" \
-      org.opencontainers.image.description="Production-ready application"
+      org.opencontainers.image.source="https://github.com/company/my-app" \
+      org.opencontainers.image.revision="abc123def" \
+      org.opencontainers.image.authors="team@company.com" \
+      org.opencontainers.image.licenses="MIT"
 ```
 
-#### Complete OCI Labels Reference
+Add company labels only when useful:
 
-| Label | Description | Example |
-|-------|-------------|---------|
-| `org.opencontainers.image.created` | Image creation timestamp (RFC 3339) | `2024-02-14T10:00:00Z` |
-| `org.opencontainers.image.authors` | Contact details of image maintainers | `John Doe <john@company.com>` |
-| `org.opencontainers.image.url` | URL to find more information | `https://company.com` |
-| `org.opencontainers.image.documentation` | URL to documentation | `https://docs.company.com` |
-| `org.opencontainers.image.source` | URL to source code | `https://github.com/company/repo` |
-| `org.opencontainers.image.version` | Version of the packaged software | `1.2.3` |
-| `org.opencontainers.image.revision` | Source control revision (git SHA) | `abc123def456...` |
-| `org.opencontainers.image.vendor` | Name of distributing entity | `Company Inc` |
-| `org.opencontainers.image.licenses` | License(s) (SPDX format) | `Apache-2.0` or `MIT` |
-| `org.opencontainers.image.ref.name` | Name of the reference for a target | `v1.2.3` or `latest` |
-| `org.opencontainers.image.title` | Human-readable title | `My Application` |
-| `org.opencontainers.image.description` | Human-readable description | `Production web server` |
-| `org.opencontainers.image.base.digest` | Digest of base image | `sha256:abc123...` |
-| `org.opencontainers.image.base.name` | Image reference of base image | `ubuntu:22.04` |
+```dockerfile
+LABEL com.company.team="backend" \
+      com.company.owner="backend-team@company.com" \
+      com.company.cost-center="engineering" \
+      com.company.service="payment-api"
+```
 
-### Using Build Arguments with OCI Labels
+## Dynamic Labels With ARG
+
+Use `ARG` when label values come from CI/CD or the build command.
 
 ```dockerfile
 ARG BUILD_DATE
 ARG VERSION
 ARG GIT_COMMIT
-ARG GIT_BRANCH
+ARG SOURCE_URL
+
+FROM node:20-alpine
+
+ARG BUILD_DATE
+ARG VERSION
+ARG GIT_COMMIT
+ARG SOURCE_URL
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.ref.name="${GIT_BRANCH}"
+      org.opencontainers.image.source="${SOURCE_URL}"
 ```
 
-**Build command:**
+Build command:
+
 ```bash
 docker build \
-  --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
-  --build-arg VERSION=1.2.3 \
-  --build-arg GIT_COMMIT=$(git rev-parse HEAD) \
-  --build-arg GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) \
-  -t myapp:1.2.3 .
+  --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  --build-arg VERSION="1.2.3" \
+  --build-arg GIT_COMMIT="$(git rev-parse HEAD)" \
+  --build-arg SOURCE_URL="https://github.com/company/my-app" \
+  -t my-app:1.2.3 .
 ```
 
----
+Important logic:
+
+- `ARG` before `FROM` can be used in the `FROM` line.
+- If you want to use an `ARG` after `FROM`, declare it again in that stage.
+- `ARG` is build-time only.
+- `LABEL` stores the final resolved value in the image metadata.
+
+## How Labels Work
+
+### Labels Are Inherited
+
+Labels from a base image are inherited by child images.
+
+```dockerfile
+FROM company/base:1.0
+LABEL app.name="order-service"
+```
+
+The final image keeps labels from `company/base:1.0` and adds `app.name`.
+
+### Labels Can Be Overridden
+
+If a child image uses the same label key, the child value wins.
+
+```dockerfile
+FROM company/base:1.0
+LABEL org.opencontainers.image.vendor="New Company Name"
+```
+
+### Labels Cannot Be Removed Cleanly
+
+Docker does not provide a simple `UNLABEL` instruction. To remove unwanted labels, rebuild from a base image that does not contain them or override the value.
+
+## Inspect And Filter Labels
+
+View all labels on an image:
+
+```bash
+docker inspect my-app:1.2.3 --format='{{json .Config.Labels}}' | jq
+```
+
+View one label:
+
+```bash
+docker inspect my-app:1.2.3 \
+  --format='{{index .Config.Labels "org.opencontainers.image.version"}}'
+```
+
+List images that have a label:
+
+```bash
+docker images --filter "label=org.opencontainers.image.version"
+```
+
+List images with a specific label value:
+
+```bash
+docker images --filter "label=com.company.team=backend"
+```
+
+List containers with a label:
+
+```bash
+docker ps --filter "label=app.name=payment-api"
+```
+
+Show labels in image list output:
+
+```bash
+docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.Labels}}"
+```
 
 ## Best Practices
 
-### 1. Use Standard Namespaces
+Use OCI labels for common metadata.
 
 ```dockerfile
-# ✅ Good - Use OCI standard
-LABEL org.opencontainers.image.version="1.0"
-
-# ✅ Good - Use company namespace
-LABEL com.company.team="backend"
-LABEL com.company.cost-center="engineering"
-
-# ⚠️ Avoid - Generic keys without namespace
-LABEL version="1.0"
-LABEL team="backend"
-```
-
-### 2. Group Related Labels
-
-```dockerfile
-# ✅ Good - Group labels logically
-LABEL org.opencontainers.image.created="2024-02-14T10:00:00Z" \
+LABEL org.opencontainers.image.title="payment-api" \
       org.opencontainers.image.version="1.2.3" \
-      org.opencontainers.image.revision="abc123" \
-      org.opencontainers.image.authors="devops@company.com"
-
-# ❌ Bad - Scattered labels
-LABEL org.opencontainers.image.created="2024-02-14T10:00:00Z"
-RUN apt-get update
-LABEL org.opencontainers.image.version="1.2.3"
-COPY . /app
-LABEL org.opencontainers.image.authors="devops@company.com"
+      org.opencontainers.image.source="https://github.com/company/payment-api"
 ```
 
-### 3. Use Multi-line Format
+Use company namespace for company-specific metadata.
 
 ```dockerfile
-# ✅ Good - Readable multi-line format
-LABEL maintainer="devops@company.com" \
-      version="1.2.3" \
-      description="Production web application" \
-      build-date="2024-02-14"
-
-# ❌ Bad - Hard to read single line
-LABEL maintainer="devops@company.com" version="1.2.3" description="Production web application" build-date="2024-02-14"
+LABEL com.company.team="payments" \
+      com.company.owner="payments-team@company.com"
 ```
 
-### 4. Include Essential Metadata
-
-**Minimum recommended labels:**
-```dockerfile
-LABEL org.opencontainers.image.version="1.2.3" \
-      org.opencontainers.image.authors="devops@company.com" \
-      org.opencontainers.image.description="Brief description" \
-      org.opencontainers.image.source="https://github.com/company/repo"
-```
-
-### 5. Use Quotes for Values with Spaces
+Keep labels short and machine-readable where possible.
 
 ```dockerfile
-# ✅ Good
-LABEL description="This is my application"
-
-# ❌ Bad (will fail)
-LABEL description=This is my application
+LABEL com.company.environment="production"
+LABEL com.company.tier="backend"
 ```
 
-### 6. Keep Labels Concise
+Do not store secrets.
 
 ```dockerfile
-# ✅ Good - Concise
-LABEL description="Production REST API"
-
-# ⚠️ Avoid - Too verbose
-LABEL description="This is a production-ready RESTful API service that handles user authentication, data processing, and integration with third-party services..."
+# Never do this
+LABEL db.password="secret"
+LABEL api.token="token-value"
 ```
 
-### 7. Don't Store Secrets in Labels
+Group labels logically.
 
 ```dockerfile
-# ❌ NEVER DO THIS
-LABEL database.password="secret123"
-LABEL api.key="abc123xyz"
+LABEL org.opencontainers.image.title="api" \
+      org.opencontainers.image.version="1.2.3" \
+      org.opencontainers.image.revision="abc123"
 
-# ✅ Use environment variables or secrets management instead
+LABEL com.company.team="backend" \
+      com.company.service="api"
 ```
 
----
+Prefer stable labels over noisy labels. A build timestamp is useful, but too many changing labels reduce cache reuse for later Dockerfile steps if placed early.
 
-## Common Use Cases
+Place labels near the final stage metadata, usually after `FROM` and `ARG` declarations in the final stage.
 
-### 1. Version Tracking
+## Tips And Tricks
+
+Use labels for traceability:
 
 ```dockerfile
-FROM node:18-alpine
-
-LABEL version="1.2.3" \
-      release="stable" \
-      release-date="2024-02-14"
+LABEL org.opencontainers.image.revision="${GIT_COMMIT}" \
+      com.company.ci-build-url="${CI_BUILD_URL}"
 ```
 
-### 2. Maintainer Information
+Use labels for ownership:
 
 ```dockerfile
-FROM python:3.11-slim
-
-LABEL maintainer="DevOps Team <devops@company.com>" \
-      team="backend-team" \
-      contact="slack:#backend-support"
+LABEL com.company.team="platform" \
+      com.company.support="slack:#platform-support"
 ```
 
-### 3. Build Metadata
+Use labels for automation filters:
 
 ```dockerfile
-ARG BUILD_DATE
-ARG GIT_COMMIT
-ARG CI_BUILD_NUMBER
-
-FROM ubuntu:22.04
-
-LABEL build.date="${BUILD_DATE}" \
-      build.commit="${GIT_COMMIT}" \
-      build.number="${CI_BUILD_NUMBER}" \
-      build.tool="GitHub Actions"
+LABEL com.company.cleanup="true" \
+      com.company.environment="dev"
 ```
 
-### 4. License and Compliance
+Then clean up matching dev images:
+
+```bash
+docker images --filter "label=com.company.cleanup=true"
+```
+
+Use SPDX license identifiers for `org.opencontainers.image.licenses`:
 
 ```dockerfile
-FROM nginx:alpine
-
-LABEL license="Apache-2.0" \
-      vendor="Company Inc" \
-      compliance.level="SOC2" \
-      security.scan-status="passed"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
 ```
 
-### 5. Environment Tagging
+Use RFC 3339 UTC timestamp for `created`:
 
-```dockerfile
-FROM myapp:base
-
-LABEL environment="production" \
-      deployment.region="us-east-1" \
-      deployment.zone="az1"
+```bash
+date -u +%Y-%m-%dT%H:%M:%SZ
 ```
 
-### 6. Service Discovery
+Avoid storing large JSON blobs in labels unless a tool really needs them. Labels are metadata, not a database.
 
-```dockerfile
-FROM myapp:latest
-
-LABEL service.name="api-gateway" \
-      service.port="8080" \
-      service.protocol="http" \
-      service.health-endpoint="/health"
-```
-
-### 7. Cost Allocation
-
-```dockerfile
-FROM myapp:base
-
-LABEL cost.center="engineering" \
-      cost.project="project-alpha" \
-      cost.team="backend" \
-      cost.owner="john.doe@company.com"
-```
-
-### 8. Monitoring and Observability
-
-```dockerfile
-FROM myapp:latest
-
-LABEL monitoring.enabled="true" \
-      monitoring.metrics-port="9090" \
-      logging.level="info" \
-      tracing.enabled="true"
-```
-
----
-
-## Real-World Examples
-
-### Example 1: Node.js Production Application
+## Production Template
 
 ```dockerfile
 # syntax=docker/dockerfile:1
 
-ARG NODE_VERSION=18
+ARG NODE_VERSION=20
 ARG BUILD_DATE
-ARG VERSION=1.0.0
+ARG VERSION
 ARG GIT_COMMIT
+ARG SOURCE_URL
 
-FROM node:${NODE_VERSION}-alpine
+FROM node:${NODE_VERSION}-alpine AS runtime
 
-# OCI Standard Labels
-LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.authors="DevOps Team <devops@company.com>" \
-      org.opencontainers.image.url="https://company.com/products/api" \
-      org.opencontainers.image.documentation="https://docs.company.com/api" \
-      org.opencontainers.image.source="https://github.com/company/api" \
+ARG BUILD_DATE
+ARG VERSION
+ARG GIT_COMMIT
+ARG SOURCE_URL
+
+LABEL org.opencontainers.image.title="my-app" \
+      org.opencontainers.image.description="Production Node.js service" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${GIT_COMMIT}" \
+      org.opencontainers.image.source="${SOURCE_URL}" \
+      org.opencontainers.image.authors="backend-team@company.com" \
       org.opencontainers.image.vendor="Company Inc" \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.title="API Service" \
-      org.opencontainers.image.description="Production REST API service"
+      org.opencontainers.image.base.name="node:${NODE_VERSION}-alpine"
 
-# Company-specific Labels
 LABEL com.company.team="backend" \
-      com.company.cost-center="engineering" \
-      com.company.project="api-v2" \
-      com.company.environment="production" \
-      com.company.maintainer="backend-team@company.com"
-
-# Technical Labels
-LABEL tech.stack="node.js" \
-      tech.framework="express" \
-      tech.database="postgresql" \
-      tech.cache="redis"
+      com.company.service="my-app" \
+      com.company.owner="backend-team@company.com"
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 COPY . .
 
 USER node
-
 EXPOSE 3000
-
 CMD ["node", "server.js"]
 ```
 
-### Example 2: Python Django Application
+## Common Mistakes
+
+### Mistake: Using `MAINTAINER`
+
+Old way:
 
 ```dockerfile
-FROM python:3.11-slim
-
-ARG BUILD_DATE
-ARG VERSION
-ARG GIT_COMMIT
-ARG GIT_BRANCH
-
-# OCI Labels with build args
-LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.version="${VERSION}" \
-      org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.ref.name="${GIT_BRANCH}" \
-      org.opencontainers.image.title="Django Web App" \
-      org.opencontainers.image.description="Production Django application" \
-      org.opencontainers.image.authors="Web Team <web@company.com>" \
-      org.opencontainers.image.vendor="Company Inc" \
-      org.opencontainers.image.licenses="Apache-2.0"
-
-# Application Labels
-LABEL app.name="mywebapp" \
-      app.component="web" \
-      app.version="${VERSION}" \
-      app.tier="frontend"
-
-# Build Labels
-LABEL build.ci="true" \
-      build.pipeline="github-actions" \
-      build.python-version="3.11"
-
-# Deployment Labels
-LABEL deployment.strategy="rolling" \
-      deployment.replicas="3" \
-      deployment.region="us-west-2"
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-
-RUN useradd -r -u 1001 django && \
-    chown -R django:django /app
-
-USER django
-
-EXPOSE 8000
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "myproject.wsgi:application"]
+MAINTAINER John Doe <john@example.com>
 ```
 
-### Example 3: Go Microservice
+Modern way:
 
 ```dockerfile
-# syntax=docker/dockerfile:1
-
-# Build stage
-FROM golang:1.21-alpine AS builder
-
-ARG VERSION=dev
-ARG BUILD_TIME
-ARG GIT_COMMIT
-
-WORKDIR /build
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . .
-RUN CGO_ENABLED=0 go build \
-    -ldflags="-X main.Version=${VERSION} -X main.BuildTime=${BUILD_TIME}" \
-    -o app
-
-# Runtime stage
-FROM scratch
-
-ARG BUILD_DATE
-ARG VERSION
-ARG GIT_COMMIT
-
-# OCI Labels
-LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.version="${VERSION}" \
-      org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.title="Payment Service" \
-      org.opencontainers.image.description="Microservice for payment processing" \
-      org.opencontainers.image.authors="Payments Team <payments@company.com>" \
-      org.opencontainers.image.vendor="Company Inc" \
-      org.opencontainers.image.licenses="Proprietary"
-
-# Microservice Labels
-LABEL service.name="payment-service" \
-      service.type="microservice" \
-      service.protocol="grpc" \
-      service.port="50051"
-
-# Architecture Labels
-LABEL architecture.pattern="microservices" \
-      architecture.layer="business-logic" \
-      architecture.bounded-context="payments"
-
-COPY --from=builder /build/app /app
-USER 65534:65534
-EXPOSE 50051
-ENTRYPOINT ["/app"]
+LABEL org.opencontainers.image.authors="John Doe <john@example.com>"
 ```
 
-### Example 4: Multi-Stage Build with Different Labels Per Stage
+### Mistake: Expecting Labels To Configure The App
+
+This does not set an environment variable:
 
 ```dockerfile
-# syntax=docker/dockerfile:1
-
-###########################################
-# Base Stage - Common labels
-###########################################
-FROM node:18-alpine AS base
-
-LABEL stage="base" \
-      base.node-version="18" \
-      base.os="alpine"
-
-###########################################
-# Dependencies Stage
-###########################################
-FROM base AS dependencies
-
-LABEL stage="dependencies" \
-      dependencies.type="production"
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-
-###########################################
-# Builder Stage
-###########################################
-FROM base AS builder
-
-LABEL stage="builder" \
-      builder.tool="webpack"
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-###########################################
-# Production Stage - Final labels
-###########################################
-FROM base AS production
-
-ARG BUILD_DATE
-ARG VERSION
-ARG GIT_COMMIT
-
-# OCI Labels (only in final stage)
-LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.version="${VERSION}" \
-      org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.title="Web Application" \
-      org.opencontainers.image.description="Production web application"
-
-# Stage label
-LABEL stage="production"
-
-# Application labels
-LABEL app.name="webapp" \
-      app.version="${VERSION}" \
-      app.environment="production"
-
-WORKDIR /app
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-USER node
-EXPOSE 3000
-CMD ["node", "dist/server.js"]
+LABEL app.port="3000"
 ```
 
----
+Use `ENV` for runtime environment variables:
 
-## Label Management
+```dockerfile
+ENV PORT=3000
+```
 
-### Viewing Labels
+### Mistake: Forgetting ARG Scope
+
+Wrong:
+
+```dockerfile
+ARG VERSION=1.0
+FROM node:20-alpine
+LABEL org.opencontainers.image.version="${VERSION}"
+```
+
+Better:
+
+```dockerfile
+ARG VERSION=1.0
+FROM node:20-alpine
+ARG VERSION
+LABEL org.opencontainers.image.version="${VERSION}"
+```
+
+### Mistake: Putting Secrets In Labels
+
+Labels are inspectable:
 
 ```bash
-# View all labels for an image
-docker inspect myapp:latest | jq '.[0].Config.Labels'
-
-# View specific label
-docker inspect myapp:latest | jq '.[0].Config.Labels.version'
-
-# Format output nicely
-docker inspect --format='{{json .Config.Labels}}' myapp:latest | jq
-
-# View labels from running container
-docker inspect container_name | jq '.[0].Config.Labels'
+docker inspect image-name
 ```
 
-### Filtering by Labels
-
-```bash
-# List images with specific label
-docker images --filter "label=version=1.0"
-
-# List images with label key (any value)
-docker images --filter "label=maintainer"
-
-# Multiple filters
-docker images --filter "label=version=1.0" --filter "label=environment=production"
-
-# List containers by label
-docker ps --filter "label=app.name=myapp"
-
-# List stopped containers by label
-docker ps -a --filter "label=environment=staging"
-```
-
-### Removing Labels
-
-Labels cannot be removed from built images, but you can:
-
-1. **Override in child image:**
-```dockerfile
-# Set label to empty (not recommended)
-LABEL old-label=""
-```
-
-2. **Build new image without label:**
-```dockerfile
-# Simply don't include the label in new build
-```
-
-3. **Use label inheritance strategically:**
-```dockerfile
-# Base image has labels
-# Child image adds more but doesn't remove base labels
-```
-
----
-
-## Advanced Patterns
-
-### Pattern 1: Dynamic Labels from CI/CD
-
-**GitHub Actions:**
-```yaml
-# .github/workflows/build.yml
-- name: Build and push
-  run: |
-    docker build \
-      --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
-      --build-arg VERSION=${{ github.ref_name }} \
-      --build-arg GIT_COMMIT=${{ github.sha }} \
-      --build-arg CI_BUILD_NUMBER=${{ github.run_number }} \
-      --build-arg CI_BUILD_URL=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-      -t myapp:${{ github.ref_name }} .
-```
-
-**Dockerfile:**
-```dockerfile
-ARG BUILD_DATE
-ARG VERSION
-ARG GIT_COMMIT
-ARG CI_BUILD_NUMBER
-ARG CI_BUILD_URL
-
-FROM node:18-alpine
-
-LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.version="${VERSION}" \
-      org.opencontainers.image.revision="${GIT_COMMIT}" \
-      ci.build-number="${CI_BUILD_NUMBER}" \
-      ci.build-url="${CI_BUILD_URL}"
-```
-
-### Pattern 2: Environment-Specific Labels
-
-```dockerfile
-ARG ENVIRONMENT=production
-
-FROM node:18-alpine
-
-# Base labels
-LABEL org.opencontainers.image.title="My App"
-
-# Add environment-specific labels
-LABEL environment="${ENVIRONMENT}" \
-      deployment.target="${ENVIRONMENT}"
-
-# Different builds:
-# docker build --build-arg ENVIRONMENT=development -t myapp:dev .
-# docker build --build-arg ENVIRONMENT=staging -t myapp:staging .
-# docker build --build-arg ENVIRONMENT=production -t myapp:prod .
-```
-
-### Pattern 3: Label Inheritance Strategy
-
-```dockerfile
-# base-image/Dockerfile
-FROM ubuntu:22.04
-
-LABEL org.opencontainers.image.vendor="Company Inc" \
-      com.company.base-image="ubuntu-base" \
-      com.company.base-version="1.0" \
-      com.company.security-scan="passed"
-
-# app-image/Dockerfile
-FROM company/ubuntu-base:1.0
-
-# Inherits all base labels
-# Add application-specific labels
-LABEL org.opencontainers.image.title="My Application" \
-      org.opencontainers.image.version="2.0" \
-      com.company.application="myapp"
-
-# Result: Image has both base and app labels
-```
-
-### Pattern 4: JSON Metadata Labels
-
-```dockerfile
-FROM node:18-alpine
-
-# Store complex metadata as JSON
-LABEL com.company.dependencies='{ \
-        "node": "18.19.0", \
-        "npm": "10.2.4", \
-        "express": "4.18.2", \
-        "database": "postgresql-15" \
-      }' \
-      com.company.ports='{ \
-        "http": 3000, \
-        "metrics": 9090, \
-        "debug": 9229 \
-      }' \
-      com.company.health='{ \
-        "endpoint": "/health", \
-        "interval": 30, \
-        "timeout": 5 \
-      }'
-```
-
-**Query JSON labels:**
-```bash
-docker inspect myapp:latest | \
-  jq '.[0].Config.Labels."com.company.dependencies" | fromjson'
-```
-
-### Pattern 5: Compliance and Security Labels
-
-```dockerfile
-FROM nginx:alpine
-
-ARG SCAN_DATE
-ARG SCAN_TOOL=trivy
-ARG CVE_COUNT=0
-
-LABEL security.scan-date="${SCAN_DATE}" \
-      security.scan-tool="${SCAN_TOOL}" \
-      security.cve-count="${CVE_COUNT}" \
-      security.scan-status="passed" \
-      compliance.sox="true" \
-      compliance.pci-dss="true" \
-      compliance.hipaa="false" \
-      security.level="high" \
-      security.approved-by="security-team@company.com"
-```
-
----
-
-## Complete Production Examples
-
-### Example 1: Full Production Stack
-
-```dockerfile
-# syntax=docker/dockerfile:1
-
-###########################################
-# Build Arguments
-###########################################
-ARG NODE_VERSION=18
-ARG BUILD_DATE
-ARG VERSION=1.0.0
-ARG GIT_COMMIT
-ARG GIT_BRANCH
-ARG CI_BUILD_NUMBER
-ARG CI_BUILD_URL
-ARG ENVIRONMENT=production
-
-###########################################
-# Dependencies Stage
-###########################################
-FROM node:${NODE_VERSION}-alpine AS dependencies
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-
-###########################################
-# Builder Stage
-###########################################
-FROM node:${NODE_VERSION}-alpine AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-###########################################
-# Production Stage
-###########################################
-FROM node:${NODE_VERSION}-alpine AS production
-
-# ═══════════════════════════════════════
-# OCI Standard Labels
-# ═══════════════════════════════════════
-LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.authors="DevOps Team <devops@company.com>" \
-      org.opencontainers.image.url="https://company.com" \
-      org.opencontainers.image.documentation="https://docs.company.com" \
-      org.opencontainers.image.source="https://github.com/company/repo" \
-      org.opencontainers.image.version="${VERSION}" \
-      org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.vendor="Company Inc" \
-      org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.ref.name="${GIT_BRANCH}" \
-      org.opencontainers.image.title="Production API" \
-      org.opencontainers.image.description="Production-ready REST API service" \
-      org.opencontainers.image.base.name="node:${NODE_VERSION}-alpine"
-
-# ═══════════════════════════════════════
-# Build Information
-# ═══════════════════════════════════════
-LABEL build.date="${BUILD_DATE}" \
-      build.version="${VERSION}" \
-      build.commit="${GIT_COMMIT}" \
-      build.branch="${GIT_BRANCH}" \
-      build.number="${CI_BUILD_NUMBER}" \
-      build.url="${CI_BUILD_URL}" \
-      build.node-version="${NODE_VERSION}" \
-      build.tool="GitHub Actions"
-
-# ═══════════════════════════════════════
-# Company Metadata
-# ═══════════════════════════════════════
-LABEL com.company.team="backend" \
-      com.company.cost-center="engineering" \
-      com.company.project="api-v2" \
-      com.company.owner="john.doe@company.com" \
-      com.company.slack-channel="#backend-support" \
-      com.company.on-call="backend-oncall@company.com"
-
-# ═══════════════════════════════════════
-# Application Metadata
-# ═══════════════════════════════════════
-LABEL app.name="api-service" \
-      app.version="${VERSION}" \
-      app.environment="${ENVIRONMENT}" \
-      app.tier="backend" \
-      app.component="api" \
-      app.language="javascript" \
-      app.runtime="node.js"
-
-# ═══════════════════════════════════════
-# Service Discovery
-# ═══════════════════════════════════════
-LABEL service.name="api" \
-      service.port="3000" \
-      service.protocol="http" \
-      service.health-endpoint="/health" \
-      service.metrics-endpoint="/metrics" \
-      service.metrics-port="9090"
-
-# ═══════════════════════════════════════
-# Deployment Configuration
-# ═══════════════════════════════════════
-LABEL deployment.strategy="rolling" \
-      deployment.replicas="3" \
-      deployment.region="us-east-1" \
-      deployment.zone="az1" \
-      deployment.kubernetes="true"
-
-# ═══════════════════════════════════════
-# Monitoring & Observability
-# ═══════════════════════════════════════
-LABEL monitoring.enabled="true" \
-      monitoring.tool="prometheus" \
-      logging.enabled="true" \
-      logging.format="json" \
-      logging.level="info" \
-      tracing.enabled="true" \
-      tracing.tool="jaeger"
-
-# ═══════════════════════════════════════
-# Security & Compliance
-# ═══════════════════════════════════════
-LABEL security.scan-status="passed" \
-      security.scan-tool="trivy" \
-      security.level="high" \
-      compliance.sox="true" \
-      compliance.pci-dss="false" \
-      compliance.gdpr="true" \
-      license.type="MIT" \
-      license.approved="true"
-
-# ═══════════════════════════════════════
-# Technical Stack
-# ═══════════════════════════════════════
-LABEL tech.framework="express" \
-      tech.database="postgresql" \
-      tech.cache="redis" \
-      tech.message-queue="rabbitmq"
-
-# Application setup
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-WORKDIR /app
-
-COPY --from=dependencies --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --chown=nodejs:nodejs package*.json ./
-
-USER nodejs
-
-ENV NODE_ENV=production \
-    PORT=3000
-
-EXPOSE 3000 9090
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-    CMD node healthcheck.js || exit 1
-
-CMD ["node", "dist/server.js"]
-```
-
-### Build Script for Production Example
-
-```bash
-#!/bin/bash
-# build-production.sh
-
-set -e
-
-# Variables
-REGISTRY="myregistry.com"
-IMAGE_NAME="api-service"
-VERSION=${1:-"1.0.0"}
-ENVIRONMENT=${2:-"production"}
-
-# Get build metadata
-BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-GIT_COMMIT=$(git rev-parse HEAD)
-GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-CI_BUILD_NUMBER=${CI_BUILD_NUMBER:-"local"}
-CI_BUILD_URL=${CI_BUILD_URL:-"local-build"}
-
-# Build image
-echo "Building ${IMAGE_NAME}:${VERSION}..."
-
-docker build \
-  --build-arg BUILD_DATE="${BUILD_DATE}" \
-  --build-arg VERSION="${VERSION}" \
-  --build-arg GIT_COMMIT="${GIT_COMMIT}" \
-  --build-arg GIT_BRANCH="${GIT_BRANCH}" \
-  --build-arg CI_BUILD_NUMBER="${CI_BUILD_NUMBER}" \
-  --build-arg CI_BUILD_URL="${CI_BUILD_URL}" \
-  --build-arg ENVIRONMENT="${ENVIRONMENT}" \
-  -t ${REGISTRY}/${IMAGE_NAME}:${VERSION} \
-  -t ${REGISTRY}/${IMAGE_NAME}:latest \
-  .
-
-echo "Build complete!"
-echo "Image: ${REGISTRY}/${IMAGE_NAME}:${VERSION}"
-
-# Display labels
-echo ""
-echo "Image Labels:"
-docker inspect ${REGISTRY}/${IMAGE_NAME}:${VERSION} | jq '.[0].Config.Labels'
-```
-
----
+Never put passwords, tokens, private keys, or internal secrets in labels.
 
 ## Troubleshooting
 
-### Common Issues
+### Labels Are Empty Or Missing
 
-#### Issue 1: Labels Not Showing
+Check:
 
-**Problem:**
-```bash
-docker inspect myapp:latest | jq '.[0].Config.Labels'
-# Returns: null
-```
+- Did the Dockerfile contain `LABEL` in the final stage?
+- Did you inspect the correct image tag?
+- Did the build use the correct Dockerfile?
+- Did `ARG` values exist in the stage where labels are set?
 
-**Solution:**
-- Check if LABEL is in the Dockerfile
-- Verify you're inspecting the correct image
-- Ensure build completed successfully
+### Build Args Are Not Substituted
 
-#### Issue 2: Build Args Not Appearing in Labels
-
-**Problem:**
-```dockerfile
-ARG VERSION=1.0
-LABEL version="${VERSION}"  # Shows as empty
-```
-
-**Solution:**
-```dockerfile
-# ARG must be declared in the same stage where used
-FROM node:18-alpine
-ARG VERSION=1.0  # Declare here
-LABEL version="${VERSION}"  # Now works
-```
-
-#### Issue 3: Multi-line Label Breaks Build
-
-**Problem:**
-```dockerfile
-LABEL description="Line 1
-Line 2"  # Build fails
-```
-
-**Solution:**
-```dockerfile
-# Use escaped newlines
-LABEL description="Line 1\n\
-Line 2"
-
-# Or use single line with spaces
-LABEL description="Line 1 Line 2"
-```
-
-#### Issue 4: Special Characters in Label Values
-
-**Problem:**
-```dockerfile
-LABEL message="Don't break!"  # Breaks due to apostrophe
-```
-
-**Solution:**
-```dockerfile
-# Use double quotes for strings with apostrophes
-LABEL message="Don't break!"
-
-# Or escape special characters
-LABEL message='Don'\''t break!'
-```
-
-#### Issue 5: Labels Increase Image Size
-
-**Question:** Do labels make images larger?
-
-**Answer:** 
-- Labels add minimal metadata (few KB)
-- No impact on layer sizes
-- Don't affect performance
-- Safe to use extensively
-
-### Best Practices for Label Debugging
-
-```bash
-# 1. View all labels formatted
-docker inspect myapp:latest --format='{{json .Config.Labels}}' | jq
-
-# 2. Check specific label
-docker inspect myapp:latest --format='{{index .Config.Labels "version"}}'
-
-# 3. List all images with labels
-docker images --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.Labels}}"
-
-# 4. Filter images by label
-docker images --filter "label=environment=production"
-
-# 5. Compare labels between images
-diff <(docker inspect image1:latest | jq '.[0].Config.Labels') \
-     <(docker inspect image2:latest | jq '.[0].Config.Labels')
-```
-
----
-
-## Summary
-
-### Key Takeaways
-
-1. **Use OCI Standard Labels** - Follow `org.opencontainers.image.*` convention
-2. **Include Essential Metadata** - Version, maintainer, source, description
-3. **Use Build Arguments** - Make labels dynamic with build-time values
-4. **Namespace Your Labels** - Use reverse DNS notation for custom labels
-5. **Group Related Labels** - Organize labels logically
-6. **Don't Store Secrets** - Labels are visible to everyone
-7. **Use for Automation** - Filter, search, and organize images
-8. **Document Everything** - Labels serve as living documentation
-
-### Minimum Recommended Labels
+Declare `ARG` in the same stage where the `LABEL` uses it.
 
 ```dockerfile
-LABEL org.opencontainers.image.version="1.2.3" \
-      org.opencontainers.image.authors="devops@company.com" \
-      org.opencontainers.image.description="Your application description" \
-      org.opencontainers.image.source="https://github.com/your/repo"
-```
-
-### Complete Production Template
-
-```dockerfile
-ARG BUILD_DATE
+FROM alpine:3.20
 ARG VERSION
-ARG GIT_COMMIT
-
-FROM your-base-image:tag
-
-LABEL org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.version="${VERSION}" \
-      org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.title="Your App" \
-      org.opencontainers.image.description="Your description" \
-      org.opencontainers.image.authors="your-team@company.com" \
-      org.opencontainers.image.source="https://github.com/your/repo" \
-      org.opencontainers.image.vendor="Your Company" \
-      org.opencontainers.image.licenses="MIT"
-
-# Add your company-specific labels
-LABEL com.company.team="your-team" \
-      com.company.project="your-project"
-
-# Rest of your Dockerfile...
+LABEL org.opencontainers.image.version="${VERSION}"
 ```
 
----
+### Label Value With Spaces Fails
 
-## Additional Resources
+Use quotes:
 
-### Official Documentation
-- [Dockerfile LABEL Reference](https://docs.docker.com/engine/reference/builder/#label)
-- [OCI Image Spec Annotations](https://github.com/opencontainers/image-spec/blob/main/annotations.md)
-- [Docker Object Labels](https://docs.docker.com/config/labels-custom-metadata/)
+```dockerfile
+LABEL org.opencontainers.image.description="Production API service"
+```
 
-### Tools
-- [jq](https://stedolan.github.io/jq/) - JSON processor for inspecting labels
-- [docker-ls](https://github.com/mayflower/docker-ls) - List Docker images with labels
-- [Portainer](https://www.portainer.io/) - Docker management UI with label support
+### Need To Compare Labels Between Images
 
-### Related Instructions
-- [ARG](./13-ARG.MD) - Build-time variables for dynamic labels
-- [ENV](./06-ENV.MD) - Runtime environment variables
-- [MAINTAINER](./04-LABEL.MD) - Deprecated, use LABEL instead
+```bash
+diff \
+  <(docker inspect image-a --format='{{json .Config.Labels}}' | jq -S) \
+  <(docker inspect image-b --format='{{json .Config.Labels}}' | jq -S)
+```
 
----
+## Interview Questions
 
-**Last Updated:** February 2026  
-**Docker Version:** 24.x and above
+### 1. What is the purpose of `LABEL` in a Dockerfile?
 
----
+`LABEL` adds metadata to an image as key-value pairs. It is used for documentation, ownership, versioning, automation, filtering, compliance, and traceability.
 
-*This guide covers everything about the LABEL instruction for professional Docker image development.*
+### 2. Do labels affect how the container runs?
+
+No. Labels are metadata. They do not start processes, expose ports, set environment variables, or change application behavior unless an external tool reads them and acts on them.
+
+### 3. What is the difference between `LABEL` and `ENV`?
+
+`LABEL` stores image metadata. `ENV` sets environment variables available during build steps after it and inside the running container.
+
+### 4. What is the replacement for deprecated `MAINTAINER`?
+
+Use `LABEL`, preferably OCI `authors`:
+
+```dockerfile
+LABEL org.opencontainers.image.authors="team@example.com"
+```
+
+### 5. What are OCI labels?
+
+OCI labels are standard image metadata keys defined by the Open Container Initiative, such as `org.opencontainers.image.version`, `source`, `revision`, `created`, `licenses`, and `authors`.
+
+### 6. Are labels inherited from base images?
+
+Yes. Labels from the base image are inherited. If the child image sets the same key, the child value overrides the base value.
+
+### 7. Can labels store secrets?
+
+Technically yes, but you must never do it. Labels are visible through image inspection and registries. Use secret management tools instead.
+
+### 8. How do you inspect labels?
+
+```bash
+docker inspect image-name --format='{{json .Config.Labels}}' | jq
+```
+
+### 9. How do you filter images by label?
+
+```bash
+docker images --filter "label=com.company.team=backend"
+```
+
+### 10. Why use build args with labels?
+
+Build args let CI/CD inject dynamic values like build date, git SHA, version, branch name, and pipeline URL into image metadata.
+
+### 11. Where should labels be placed in a multi-stage Dockerfile?
+
+Put final image labels in the final stage. Labels in intermediate stages are not useful unless you intentionally build or publish those stages.
+
+### 12. Do labels increase image size?
+
+Only slightly because they are metadata. They do not add application files or large layers unless you put very large values in them.
+
+## Final Refresh Checklist
+
+For production images, remember:
+
+- Use `LABEL` for metadata, not runtime config.
+- Prefer OCI keys: `org.opencontainers.image.*`.
+- Use `ARG` for dynamic build metadata.
+- Include version, source, revision, authors, license, and description.
+- Use company namespace for internal labels.
+- Never store secrets in labels.
+- Inspect labels with `docker inspect`.
+- Filter with `docker images --filter label=...` or `docker ps --filter label=...`.
+- Put important labels in the final stage of multi-stage builds.
+
+## Related Files
+
+- [All Dockerfile Instructions](./00-all-docker-file-instructions.MD)
+- [ADD vs COPY](./02-ADD-vs-COPY.MD)
+- [ARG](./03-ARG.MD)
+
+## Official References
+
+- [Dockerfile LABEL reference](https://docs.docker.com/reference/dockerfile/#label)
+- [Docker object labels](https://docs.docker.com/engine/manage-resources/labels/)
+- [OCI image annotations](https://github.com/opencontainers/image-spec/blob/main/annotations.md)
