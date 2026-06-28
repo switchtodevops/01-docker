@@ -26,3 +26,5 @@ What is the size of the nginx image? 66MB
 How much disk space is Docker using for this image on your machine? 241MB 
 
 04 - How vendor create the base images ? for example redhat minimal image ? 
+
+05 - How to check the lables of a docker image ? how to check docker image information without running it ? 
